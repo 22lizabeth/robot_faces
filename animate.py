@@ -2,6 +2,9 @@ import numpy as np
 import cv2 as cv
 from draw import*
 
+import face_display
+import rospy
+
 #Colors (BGR)
 black = 0,0,0
 white = 255,255,255
@@ -31,7 +34,11 @@ nLowerMouthX2 = 95
 nMouthY1 = 493
 nMouthY2 = 10
 
-def animateFace(img, animateFrom, animateTo):
+
+faceDisplay = face_display.RobotDisplay()
+
+def animateFace(img, animateFrom, animateTo,newFaceDisplay):
+    faceDisplay = newFaceDisplay
     if animateFrom == animateTo:
         return img
     if animateFrom != 'n':
@@ -147,6 +154,7 @@ def animateFromSurprised(img):
         
         #Show each stage of animation
         cv.imshow('Face',img)
+        faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
     drawNeutralFace(img)
@@ -275,6 +283,7 @@ def animateFromSad(img):
 
         #Show the images
         cv.imshow('Face',img)
+        faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
     drawFace(img, 'n')
@@ -462,6 +471,7 @@ def animateFromAngry(img):
 
         #Show the images
         cv.imshow('Face',img)
+        faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(500)
     
     #drawFace(img,'n')
@@ -577,6 +587,7 @@ def animateToSurprised(img):
         
         #Show each stage of animation
         cv.imshow('Face',img)
+        faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
     cv.line(img,(132,eyeLineY1),(170,eyeLineY2),backgroundColor,thickness=4) #leftEyeSideLine
     cv.line(img,(892,eyeLineY1),(854,eyeLineY2),backgroundColor,thickness=4) #rightEyeSideLine
@@ -682,6 +693,7 @@ def animateToSad(img):
 
         #Show the images
         cv.imshow('Face',img)
+        faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
     drawFace(img,'d')
@@ -833,6 +845,7 @@ def animateToAngry(img):
 
         #Show the images
         cv.imshow('Face',img)
+        faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
     #cv.line(img,(lEyeLineX1,nEyeLineY1),(lEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #leftEyeSideLine

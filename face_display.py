@@ -28,14 +28,14 @@ class RobotDisplay(object):
         # Return msg
         return cv_bridge.CvBridge().cv2_to_imgmsg(img, encoding="bgr8")
 
-    def display_image(self, img, sleep = True):
+    def display_image(self, img, sleep = False):
         """
         Function to display an image, give it the numpy screen and whether it needs to sleep or not
         """
 
         cv_img = self._setup_image(img)
 
-        r = rospy.Rate(10)
+        r = rospy.Rate(20)
         """
         15hz, minnimum time for message to get to Sawyer for a single image
         if using a ros Rate in another file, sleep is not needed
@@ -43,4 +43,4 @@ class RobotDisplay(object):
 
         self._image_pub.publish(cv_img)
         if sleep:
-            r.sleep()
+           r.sleep()
