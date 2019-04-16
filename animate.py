@@ -287,8 +287,9 @@ def animateFromAngry(img):
     eyebrowMaxChange = 10
     eyeSideLineMaxChange = 8
     mouthMaxChange = 13
+    irisMaxChange = 12
 
-    maxChange = max([bottomEyeArchMaxChange,eyebrowMaxChange,upperEyeArchMaxChange,eyeSideLineMaxChange,mouthMaxChange])
+    maxChange = max([bottomEyeArchMaxChange,eyebrowMaxChange,upperEyeArchMaxChange,eyeSideLineMaxChange,mouthMaxChange,irisMaxChange])
 
     mouthCurvedDown = True
     bottomEyeCurvedDown = True
@@ -314,6 +315,12 @@ def animateFromAngry(img):
     endAngleR = 275
     mouthStartAngle = 229
     mouthEndAngle = 311
+    irisStartAngle = 250#253
+    irisEndAngle = 290#287
+    irisCenterY = 205#211
+    #upperIrisStartAngle = 245
+    #upperIrisEndAngle = 295
+    upperIrisCenterY = 260
 
     eyebrowY1 = 222
     eyebrowY2 = 20
@@ -350,6 +357,34 @@ def animateFromAngry(img):
         if i >= maxChange - bottomEyeArchMaxChange:
             cv.ellipse(img,(280,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=4) #leftBottomEyeArch
             cv.ellipse(img,(744,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=4) #rightBottomEyeArch
+        
+        #Upper eye animation to angry eyes
+        if i >= maxChange - upperEyeArchMaxChange:
+            cv.ellipse(img,(744,archY1),(180,archY2),rUpperEyeRotation,rUpperEyeStartAngle,rUpperEyeEndAngle,backgroundColor,thickness=5) #rightUpperEyeArch
+            cv.ellipse(img,(280,archY1),(180,archY2),lUpperEyeRotation,lUpperEyeStartAngle,lUpperEyeEndAngle,backgroundColor,thickness=5) #leftUpperEyeArch
+
+        #Iris change to neutral eyes
+        if i <= irisMaxChange:
+            #redraw parts of the iris as the bottom eye arch moves down
+            cv.ellipse(img,(280,irisCenterY),(100,80),180,irisStartAngle,irisEndAngle,eyeColor,thickness=3) #leftIris
+            cv.ellipse(img,(744,irisCenterY),(100,80),180,irisStartAngle,irisEndAngle,eyeColor,thickness=3) #rightIris
+            if i < 8 or i == 9:
+                irisStartAngle = irisStartAngle + 1
+                irisEndAngle = irisEndAngle - 1
+            elif i == 8 or i == 10:
+                irisStartAngle = irisStartAngle + 2
+                irisEndAngle = irisEndAngle - 2
+            else:
+                irisStartAngle = irisStartAngle + 3
+                irisEndAngle = irisEndAngle - 3
+            irisCenterY = irisCenterY + 2
+            #if i >= maxChange - upperEyeArchMaxChange:
+            cv.ellipse(img,(280,upperIrisCenterY),(100,80),0,irisStartAngle,irisEndAngle,pink,thickness=3) #leftIris
+            cv.ellipse(img,(744,upperIrisCenterY),(100,80),0,irisStartAngle,irisEndAngle,pink,thickness=3) #rightIris
+            upperIrisCenterY = upperIrisCenterY - 2
+        
+        #Bottom eye arch animation to angry eyes
+        if i >= maxChange - bottomEyeArchMaxChange:
             if bottomEyeCenterY2 == 0:
                 bottomEyeCurvedDown = False
                 bottomEyeAxes = 180
@@ -364,6 +399,21 @@ def animateFromAngry(img):
                 bottomEyeEndAngle = bottomEyeEndAngle + 1
             cv.ellipse(img,(280,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,faceColor,thickness=4) #leftBottomEyeArch
             cv.ellipse(img,(744,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,faceColor,thickness=4) #rightBottomEyeArch
+        
+        #Upper eye animation to angry eyes
+        if i <= upperEyeArchMaxChange:#i >= maxChange - upperEyeArchMaxChange:
+            cv.ellipse(img,(744,archY1),(180,archY2),rUpperEyeRotation,rUpperEyeStartAngle,rUpperEyeEndAngle,backgroundColor,thickness=5) #rightUpperEyeArch
+            cv.ellipse(img,(280,archY1),(180,archY2),lUpperEyeRotation,lUpperEyeStartAngle,lUpperEyeEndAngle,backgroundColor,thickness=5) #leftUpperEyeArch
+            archY1 = archY1 - 1
+            archY2 = archY2 + 5
+            lUpperEyeRotation = lUpperEyeRotation - 1
+            lUpperEyeEndAngle = lUpperEyeEndAngle + 1
+            lUpperEyeStartAngle = lUpperEyeStartAngle - 1
+            rUpperEyeRotation = rUpperEyeRotation + 1
+            rUpperEyeStartAngle = rUpperEyeStartAngle - 1
+            rUpperEyeEndAngle = rUpperEyeEndAngle + 1
+            cv.ellipse(img,(744,archY1),(180,archY2),rUpperEyeRotation,rUpperEyeStartAngle,rUpperEyeEndAngle,faceColor,thickness=4) #rightUpperEyeArch
+            cv.ellipse(img,(280,archY1),(180,archY2),lUpperEyeRotation,lUpperEyeStartAngle,lUpperEyeEndAngle,faceColor,thickness=4) #leftUpperEyeArch
         
         #Eyebrow animation to angry eyebrows
         if i >= maxChange - eyebrowMaxChange:
@@ -398,21 +448,6 @@ def animateFromAngry(img):
 
             cv.ellipse(img,(280,nEyebrowY1),(190,eyebrowY2),lEyebrowRotation,startAngleL,endAngleL,faceColor,thickness=5) #leftEyebrow
             cv.ellipse(img,(744,nEyebrowY1),(190,eyebrowY2),rEyebrowRotation,startAngleR,endAngleR,faceColor,thickness=5) #rightEyebrow
-            
-        #Upper eye animation to angry eyes
-        if i >= maxChange - upperEyeArchMaxChange:
-            cv.ellipse(img,(744,archY1),(180,archY2),rUpperEyeRotation,rUpperEyeStartAngle,rUpperEyeEndAngle,backgroundColor,thickness=5) #rightUpperEyeArch
-            cv.ellipse(img,(280,archY1),(180,archY2),lUpperEyeRotation,lUpperEyeStartAngle,lUpperEyeEndAngle,backgroundColor,thickness=5) #leftUpperEyeArch
-            archY1 = archY1 - 1
-            archY2 = archY2 + 5
-            lUpperEyeRotation = lUpperEyeRotation - 1
-            lUpperEyeEndAngle = lUpperEyeEndAngle + 1
-            lUpperEyeStartAngle = lUpperEyeStartAngle - 1
-            rUpperEyeRotation = rUpperEyeRotation + 1
-            rUpperEyeStartAngle = rUpperEyeStartAngle - 1
-            rUpperEyeEndAngle = rUpperEyeEndAngle + 1
-            cv.ellipse(img,(744,archY1),(180,archY2),rUpperEyeRotation,rUpperEyeStartAngle,rUpperEyeEndAngle,faceColor,thickness=4) #rightUpperEyeArch
-            cv.ellipse(img,(280,archY1),(180,archY2),lUpperEyeRotation,lUpperEyeStartAngle,lUpperEyeEndAngle,faceColor,thickness=4) #leftUpperEyeArch
         
         #Eye side line animation
         if i >= maxChange - eyeSideLineMaxChange:
@@ -427,9 +462,9 @@ def animateFromAngry(img):
 
         #Show the images
         cv.imshow('Face',img)
-        cv.waitKey(fps)
+        cv.waitKey(500)
     
-    drawFace(img,'n')
+    #drawFace(img,'n')
     return img
 
 def animateFromHappy(img):
@@ -543,7 +578,8 @@ def animateToSurprised(img):
         #Show each stage of animation
         cv.imshow('Face',img)
         cv.waitKey(fps)
-
+    cv.line(img,(132,eyeLineY1),(170,eyeLineY2),backgroundColor,thickness=4) #leftEyeSideLine
+    cv.line(img,(892,eyeLineY1),(854,eyeLineY2),backgroundColor,thickness=4) #rightEyeSideLine
     drawFace(img,'s')
     return img
 
@@ -721,8 +757,8 @@ def animateToAngry(img):
         
         #Bottom eye arch animation to angry eyes
         if i >= maxChange - bottomEyeArchMaxChange:
-            cv.ellipse(img,(280,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=4) #leftBottomEyeArch
-            cv.ellipse(img,(744,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=4) #rightBottomEyeArch
+            cv.ellipse(img,(280,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=5) #leftBottomEyeArch
+            cv.ellipse(img,(744,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=5) #rightBottomEyeArch
             if bottomEyeCenterY2 == 0:
                 bottomEyeCurvedDown = True
                 bottomEyeAxes = 0
@@ -786,8 +822,8 @@ def animateToAngry(img):
         
         #Eye side line animation
         if i >= maxChange - eyeSideLineMaxChange:
-            cv.line(img,(lEyeLineX1,nEyeLineY1),(lEyeLineX2,nEyeLineY2),backgroundColor,thickness=4) #leftEyeSideLine
-            cv.line(img,(rEyeLineX1,nEyeLineY1),(rEyeLineX2,nEyeLineY2),backgroundColor,thickness=4) #rightEyeSideLine
+            cv.line(img,(lEyeLineX1,nEyeLineY1),(lEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #leftEyeSideLine
+            cv.line(img,(rEyeLineX1,nEyeLineY1),(rEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #rightEyeSideLine
             lEyeLineX1 = lEyeLineX1 + 4
             lEyeLineX2 = lEyeLineX2 + 4
             rEyeLineX1 = rEyeLineX1 - 4
@@ -798,7 +834,9 @@ def animateToAngry(img):
         #Show the images
         cv.imshow('Face',img)
         cv.waitKey(fps)
-    print(startAngleL, endAngleL, startAngleR, endAngleR)
+
+    #cv.line(img,(lEyeLineX1,nEyeLineY1),(lEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #leftEyeSideLine
+    #cv.line(img,(rEyeLineX1,nEyeLineY1),(rEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #rightEyeSideLine
     
     drawFace(img,'a')
     return img
