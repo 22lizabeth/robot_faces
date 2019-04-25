@@ -40,7 +40,7 @@ faceDisplay = face_display.RobotDisplay()
 #Fill background with background color pixels
 img = np.zeros((600,1024,3), np.uint8)
 img[:] = backgroundColor
-cv.imshow('Face',img) #FOR LAPTOP
+cv.imshow('Face',img) #FOR COMPUTER
 faceDisplay.display_image(img) #FOR ROBOT
 
 #Draw the first face the user chooses
@@ -51,7 +51,7 @@ if k == escKey:
     img = np.zeros((20,20,3),np.uint8)
     img.fill(255)
     faceDisplay.display_image(img, True) #FOR ROBOT
-    cv.destroyAllWindows() #How will this work with robot?
+    cv.destroyAllWindows()
 else:
     currentFace = k
     img = drawFace(img, chr(k))
@@ -65,11 +65,12 @@ if currentFace != 0:
             img = np.zeros((20,20,3),np.uint8)
             img.fill(255)
             faceDisplay.display_image(img, True) #FOR ROBOT
-            cv.destroyAllWindows() #Again how will this work?
+            cv.destroyAllWindows() 
             break
         img = animateFace(img, chr(currentFace), chr(k),faceDisplay)
+        #img = animateFace(img, chr(currentFace), chr(k))
         currentFace = k
-        cv.imshow('Face', img) #FOR LAPTOP
+        cv.imshow('Face', img) #FOR COMPUTER
         faceDisplay.display_image(img) #FOR ROBOT
         k = cv.waitKey()
 
