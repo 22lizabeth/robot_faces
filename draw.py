@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import numpy as np 
 import cv2 as cv
 
@@ -9,21 +10,21 @@ backgroundColor = white
 faceColor = black
 eyeColor = green
 
-def drawFace(img, faceType):
+def drawFace(img, faceType, image = False):
     #Draw face elements that remain unchanged based on facial expession
     drawInnerEye(img)
     drawNose(img)
 
     if faceType == 'n':
-        drawNeutralFace(img)
+        drawNeutralFace(img, image)
     elif faceType == 's':
-        drawSurpriseFace(img)
+        drawSurpriseFace(img, image)
     elif faceType == 'd':
-        drawSadFace(img)
+        drawSadFace(img, image)
     elif faceType == 'a':
-        drawAngryFace(img)
+        drawAngryFace(img, image)
     elif faceType == 'h':
-        drawHappyFace(img)
+        drawHappyFace(img, image)
 
     return img
 
@@ -41,7 +42,7 @@ def drawNose(img):
     cv.line(img,(500,380),(512,400),faceColor,thickness=4) #lowerNoseLine
     return img
 
-def drawNeutralFace(img):
+def drawNeutralFace(img, image):
      #LeftEye
     cv.ellipse(img,(280,288),(180,150),0,215,305,faceColor,thickness=4) #leftUpperEyeArch
     cv.line(img,(132,202),(170,258),faceColor,thickness=4) #leftEyeSideLine
@@ -58,11 +59,14 @@ def drawNeutralFace(img):
 
     #mouth
     cv.ellipse(img,(512,493),(95,10),180,220,320,faceColor,thickness=4) #neutralmouth
-    cv.imshow('Face',img)
+    if image:
+        cv.imshow('Face',img)
 
     return img
 
-def drawSurpriseFace(img):
+
+def drawSurpriseFace(img, image):
+                    
     #LeftEye
     cv.ellipse(img,(280,300),(180,180),0,215,305,faceColor,thickness=4) #leftUpperEyeArch
     cv.line(img,(132,198),(170,270),faceColor,thickness=4) #leftEyeSideLine
@@ -80,11 +84,12 @@ def drawSurpriseFace(img):
     #mouth
     cv.ellipse(img,(512,520),(40,40),0,190,350,faceColor,thickness=4) #upperMouthArch
     cv.ellipse(img,(512,488),(50,40),180,220,320,faceColor,thickness=4) #lowerMouthArch
-    cv.imshow('Face',img)
+    if image:
+        cv.imshow('Face',img)
 
     return img
 
-def drawSadFace(img): 
+def drawSadFace(img, image): 
 
     #Erase bottom part of Iris
     bottomEyeCenterY = 141
@@ -109,11 +114,12 @@ def drawSadFace(img):
 
     #mouth
     cv.ellipse(img,(512,560),(95,68),0,220,320,faceColor,thickness=4) #sadmouth
-    cv.imshow('Face',img)
+    if image:
+        cv.imshow('Face',img)
 
     return img
 
-def drawAngryFace(img):
+def drawAngryFace(img, image):
 
     #Erase bottom part of iris
     bottomEyeCenterY1 = 141
@@ -177,9 +183,10 @@ def drawAngryFace(img):
 
     #mouth
     cv.ellipse(img,(512,545),(95,51),0,229,311,faceColor,thickness=4) #angrymouth
-    cv.imshow('Face',img)
+    if image:
+        cv.imshow('Face',img)
 
     return img
 
-def drawHappyFace(img):
+def drawHappyFace(img, image):
     return img

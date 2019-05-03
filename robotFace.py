@@ -1,5 +1,6 @@
-import cv2 as cv 
-import numpy as np 
+#!/usr/bin/python
+import cv2 as cv
+import numpy as np
 from draw import*
 from animate import*
 
@@ -8,7 +9,8 @@ import os
 import cv2
 import cv_bridge
 import rospy
-import sys, os
+import sys
+import os
 import numpy as np
 import threading
 from sensor_msgs.msg import Image
@@ -22,61 +24,69 @@ import signal
 #Happy = 'h'
 #Angry = 'a'
 
+
 def keyboardInterruptHandler(signal, frame):
     print("\nKeyboardInterrupt (ID: {}) has been caught. Cleaning up...".format(signal))
     exit(0)
 
+
+def getKey():
+    key = cv.waitKey()
+    return key
+
+
+class robotFace:
+    def __init__(self, image = False):
+        self.image = image
+        self.currentFace = 0
+        self.escKey = 27
+        self.black = 0, 0, 0
+        self.green = 0, 153, 76
+        self.white = 255, 255, 255
+        self.backgroundColor = white
+    
+        self.faceDisplay = face_display.RobotDisplay()
+
+    #Fill background with background color pixels
+        self.img = np.zeros((600, 1024, 3), np.uint8)
+        self.img[:] = backgroundColor
+        if self.image:
+            cv.imshow('Face', self.img)  # FOR LAPTOP
+        self.faceDisplay.display_image(self.img)  # FOR ROBOT
+        k = ord('n')
+        self.currentFace = k
+        self.img = drawFace(self.img, chr(k))
+        self.faceDisplay.display_image(self.img)
+
+
+    def closing_handle(self):
+        self.img = np.zeros((20, 20, 3), np.uint8)
+        self.img.fill(255)
+        self.faceDisplay.display_image(self.img, True)  # FOR ROBOT
+        cv.destroyAllWindows()  # How will this work with robot?
+
+    def change_face(self, k):
+        if k == self.escKey:
+            self.closing_handle()
+            return False
+        else: 
+            self.img = animateFace(self.img, chr(self.currentFace), chr(k), faceDisplay, self.image)
+            self.currentFace = k
+            if self.image:
+                cv.imshow('Face', self.img)  # FOR LAPTOP
+            faceDisplay.display_image(self.img)  # FOR ROBOT
+            return True
+
+
 signal.signal(signal.SIGINT, keyboardInterruptHandler)
 
-#Colors (BGR)
-black = 0,0,0
-green = 0,153,76
-white = 255,255,255
-backgroundColor = white
 
-rospy.init_node('Face_Display')
-faceDisplay = face_display.RobotDisplay()
+def main(args):
+    rospy.init_node('Face_Display')
+    face = robotFace(True)
 
-#Fill background with background color pixels
-img = np.zeros((600,1024,3), np.uint8)
-img[:] = backgroundColor
-cv.imshow('Face',img) #FOR COMPUTER
-faceDisplay.display_image(img) #FOR ROBOT
+    while (face.change_face(cv.waitKey())):
+        pass
 
-#Draw the first face the user chooses
-currentFace = 0
-escKey = 27
-k = cv.waitKey()
-if k == escKey:
-    img = np.zeros((20,20,3),np.uint8)
-    img.fill(255)
-    faceDisplay.display_image(img, True) #FOR ROBOT
-    cv.destroyAllWindows()
-else:
-    currentFace = k
-    img = drawFace(img, chr(k))
-    faceDisplay.display_image(img) #FOR ROBOT
-
-#Continue to whichever faces the user chooses
-if currentFace != 0:
-    k = cv.waitKey()
-    while(True):
-        if k == escKey:
-            img = np.zeros((20,20,3),np.uint8)
-            img.fill(255)
-            faceDisplay.display_image(img, True) #FOR ROBOT
-            cv.destroyAllWindows() 
-            break
-        img = animateFace(img, chr(currentFace), chr(k),faceDisplay)
-        #img = animateFace(img, chr(currentFace), chr(k))
-        currentFace = k
-        cv.imshow('Face', img) #FOR COMPUTER
-        faceDisplay.display_image(img) #FOR ROBOT
-        k = cv.waitKey()
-
-
-
-
-        
-
-    
+if __name__ == '__main__':
+    main(sys.argv)

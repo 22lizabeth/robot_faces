@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 import cv2
 import cv_bridge
@@ -35,7 +36,7 @@ class RobotDisplay(object):
 
         cv_img = self._setup_image(img)
 
-        r = rospy.Rate(20)
+        r = rospy.Rate(15)
         """
         15hz, minnimum time for message to get to Sawyer for a single image
         if using a ros Rate in another file, sleep is not needed

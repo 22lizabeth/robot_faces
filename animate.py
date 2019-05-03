@@ -1,8 +1,9 @@
+#!/usr/bin/python
 import numpy as np 
 import cv2 as cv
 from draw import*
 
-#import face_display
+import face_display
 #import rospy
 
 #Colors (BGR)
@@ -34,20 +35,19 @@ nLowerMouthX2 = 95
 nMouthY1 = 493
 nMouthY2 = 10
 
-
 faceDisplay = face_display.RobotDisplay()
 
-def animateFace(img, animateFrom, animateTo, newFaceDisplay):
+def animateFace(img, animateFrom, animateTo, newFaceDisplay, image):
     faceDisplay = newFaceDisplay
     if animateFrom == animateTo:
         return img
     if animateFrom != 'n':
-        img = animateFromDict[animateFrom](img)
+        img = animateFromDict[animateFrom](img, image)
     if animateTo != 'n':
-        img = animateToDict[animateTo](img)
+        img = animateToDict[animateTo](img, image)
     return img
 
-def animateFromSurprised(img):
+def animateFromSurprised(img, image):
     #Animation Variables
     bottomEyeArchMaxChange = 3
     eyebrowMaxChange = 6
@@ -153,14 +153,15 @@ def animateFromSurprised(img):
             cv.line(img,(892,eyeLineY1),(854,eyeLineY2),faceColor,thickness=4) #rightEyeSideLine
         
         #Show each stage of animation
-        cv.imshow('Face',img)
+        if image:
+            cv.imshow('Face',img)
         faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
-    drawNeutralFace(img)
+    drawFace(img,'n', image)
     return img
 
-def animateFromSad(img):
+def animateFromSad(img, image):
     #Animation Variables
     bottomEyeArchMaxChange = 13
     upperEyeArchMaxChange = 3 
@@ -282,14 +283,15 @@ def animateFromSad(img):
             cv.line(img,(892,eyeLineY1),(854,eyeLineY2),faceColor,thickness=4) #rightEyeSideLine
 
         #Show the images
-        cv.imshow('Face',img)
+        if  image:
+            cv.imshow('Face',img)
         faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
-    drawFace(img, 'n')
+    drawFace(img, 'n', image)
     return img
 
-def animateFromAngry(img):
+def animateFromAngry(img, image):
     #Animation Variables
     bottomEyeArchMaxChange = 13
     upperEyeArchMaxChange = 8
@@ -513,17 +515,18 @@ def animateFromAngry(img):
             cv.line(img,(rEyeLineX1,nEyeLineY1),(rEyeLineX2,nEyeLineY2),faceColor,thickness=4) #rightEyeSideLine
 
         #Show the images
-        cv.imshow('Face',img)
+        if image:
+            cv.imshow('Face',img)
         faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
-    drawFace(img,'n')
+    drawFace(img,'n', image)
     return img
 
-def animateFromHappy(img):
+def animateFromHappy(img, image):
     return img
 
-def animateToSurprised(img):
+def animateToSurprised(img, image):
     #Animation Variables
     bottomEyeArchMaxChange = 4
     eyebrowMaxChange = 6
@@ -629,15 +632,16 @@ def animateToSurprised(img):
             cv.line(img,(892,eyeLineY1),(854,eyeLineY2),faceColor,thickness=4) #rightEyeSideLine
         
         #Show each stage of animation
-        cv.imshow('Face',img)
+        if image:
+            cv.imshow('Face',img)
         faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
     cv.line(img,(132,eyeLineY1),(170,eyeLineY2),backgroundColor,thickness=4) #leftEyeSideLine
     cv.line(img,(892,eyeLineY1),(854,eyeLineY2),backgroundColor,thickness=4) #rightEyeSideLine
-    drawFace(img,'s')
+    drawFace(img,'s', image)
     return img
 
-def animateToSad(img):
+def animateToSad(img, image):
     #Animation Variables
     bottomEyeArchMaxChange = 10
     upperEyeArchMaxChange = 3
@@ -735,14 +739,15 @@ def animateToSad(img):
             cv.line(img,(892,eyeLineY1),(854,eyeLineY2),faceColor,thickness=4) #rightEyeSideLine
 
         #Show the images
-        cv.imshow('Face',img)
+        if image:
+            cv.imshow('Face',img)
         faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
-    drawFace(img,'d')
+    drawFace(img,'d', image)
     return img
     
-def animateToAngry(img):
+def animateToAngry(img, image):
     #Animation Variables
     bottomEyeArchMaxChange = 13
     upperEyeArchMaxChange = 8
@@ -887,17 +892,18 @@ def animateToAngry(img):
             cv.line(img,(rEyeLineX1,nEyeLineY1),(rEyeLineX2,nEyeLineY2),faceColor,thickness=4) #rightEyeSideLine
 
         #Show the images
-        cv.imshow('Face',img)
+        if image:
+            cv.imshow('Face',img)
         faceDisplay.display_image(img) #FOR ROBOT
         cv.waitKey(fps)
 
     #cv.line(img,(lEyeLineX1,nEyeLineY1),(lEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #leftEyeSideLine
     #cv.line(img,(rEyeLineX1,nEyeLineY1),(rEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #rightEyeSideLine
     
-    drawFace(img,'a')
+    drawFace(img,'a', image)
     return img
 
-def animateToHappy(img):
+def animateToHappy(img, image):
     return img
 
 animateToDict = {'s': animateToSurprised, 'd': animateToSad, 'a': animateToAngry, 'h': animateToHappy}
