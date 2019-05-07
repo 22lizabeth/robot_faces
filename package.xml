@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>face_pkg</name>
+  <name>RobotFaces</name>
   <version>0.0.0</version>
   <description>The face_pkg package</description>
 
