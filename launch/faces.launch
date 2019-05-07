@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="RobotFaces" type="robotFace.py" name ="Robot_Faces" output="screen">
+    </node>
+    
+</launch>

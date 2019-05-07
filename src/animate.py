@@ -37,17 +37,17 @@ nMouthY2 = 10
 
 faceDisplay = face_display.RobotDisplay()
 
-def animateFace(img, animateFrom, animateTo, newFaceDisplay, image):
+def animateFace(img, animateFrom, animateTo, newFaceDisplay, image, robotOn):
     faceDisplay = newFaceDisplay
     if animateFrom == animateTo:
         return img
     if animateFrom != 'n':
-        img = animateFromDict[animateFrom](img, image)
+        img = animateFromDict[animateFrom](img, image, robotOn)
     if animateTo != 'n':
-        img = animateToDict[animateTo](img, image)
+        img = animateToDict[animateTo](img, image, robotOn)
     return img
 
-def animateFromSurprised(img, image):
+def animateFromSurprised(img, image, robotOn):
     #Animation Variables
     bottomEyeArchMaxChange = 3
     eyebrowMaxChange = 6
@@ -155,13 +155,14 @@ def animateFromSurprised(img, image):
         #Show each stage of animation
         if image:
             cv.imshow('Face',img)
-        faceDisplay.display_image(img) #FOR ROBOT
+        if robotOn:
+            faceDisplay.display_image(img)  # FOR ROBOT
         cv.waitKey(fps)
 
     drawFace(img,'n', image)
     return img
 
-def animateFromSad(img, image):
+def animateFromSad(img, image, robotOn):
     #Animation Variables
     bottomEyeArchMaxChange = 13
     upperEyeArchMaxChange = 3 
@@ -285,13 +286,14 @@ def animateFromSad(img, image):
         #Show the images
         if  image:
             cv.imshow('Face',img)
-        faceDisplay.display_image(img) #FOR ROBOT
+        if robotOn:
+            faceDisplay.display_image(img)  # FOR ROBOT
         cv.waitKey(fps)
 
     drawFace(img, 'n', image)
     return img
 
-def animateFromAngry(img, image):
+def animateFromAngry(img, image, robotOn):
     #Animation Variables
     bottomEyeArchMaxChange = 13
     upperEyeArchMaxChange = 8
@@ -517,16 +519,17 @@ def animateFromAngry(img, image):
         #Show the images
         if image:
             cv.imshow('Face',img)
-        faceDisplay.display_image(img) #FOR ROBOT
+        if robotOn:
+            faceDisplay.display_image(img)  # FOR ROBOT
         cv.waitKey(fps)
 
     drawFace(img,'n', image)
     return img
 
-def animateFromHappy(img, image):
+def animateFromHappy(img, image, robotOn):
     return img
 
-def animateToSurprised(img, image):
+def animateToSurprised(img, image, robotOn):
     #Animation Variables
     bottomEyeArchMaxChange = 4
     eyebrowMaxChange = 6
@@ -634,14 +637,15 @@ def animateToSurprised(img, image):
         #Show each stage of animation
         if image:
             cv.imshow('Face',img)
-        faceDisplay.display_image(img) #FOR ROBOT
+        if robotOn:
+            faceDisplay.display_image(img)  # FOR ROBOT
         cv.waitKey(fps)
     cv.line(img,(132,eyeLineY1),(170,eyeLineY2),backgroundColor,thickness=4) #leftEyeSideLine
     cv.line(img,(892,eyeLineY1),(854,eyeLineY2),backgroundColor,thickness=4) #rightEyeSideLine
     drawFace(img,'s', image)
     return img
 
-def animateToSad(img, image):
+def animateToSad(img, image, robotOn):
     #Animation Variables
     bottomEyeArchMaxChange = 10
     upperEyeArchMaxChange = 3
@@ -741,13 +745,14 @@ def animateToSad(img, image):
         #Show the images
         if image:
             cv.imshow('Face',img)
-        faceDisplay.display_image(img) #FOR ROBOT
+        if robotOn:
+            faceDisplay.display_image(img)  # FOR ROBOT
         cv.waitKey(fps)
 
     drawFace(img,'d', image)
     return img
     
-def animateToAngry(img, image):
+def animateToAngry(img, image, robotOn):
     #Animation Variables
     bottomEyeArchMaxChange = 13
     upperEyeArchMaxChange = 8
@@ -894,7 +899,8 @@ def animateToAngry(img, image):
         #Show the images
         if image:
             cv.imshow('Face',img)
-        faceDisplay.display_image(img) #FOR ROBOT
+        if robotOn:
+            faceDisplay.display_image(img)  # FOR ROBOT
         cv.waitKey(fps)
 
     #cv.line(img,(lEyeLineX1,nEyeLineY1),(lEyeLineX2,nEyeLineY2),backgroundColor,thickness=5) #leftEyeSideLine
@@ -903,7 +909,7 @@ def animateToAngry(img, image):
     drawFace(img,'a', image)
     return img
 
-def animateToHappy(img, image):
+def animateToHappy(img, image, robotOn):
     return img
 
 animateToDict = {'s': animateToSurprised, 'd': animateToSad, 'a': animateToAngry, 'h': animateToHappy}
