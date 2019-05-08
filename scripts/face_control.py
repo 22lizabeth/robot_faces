@@ -6,9 +6,9 @@ import os
 import cv2
 import cv_bridge
 from intera_interface import CHECK_VERSION
-from face_pkg.srv import *
+from RobotFaces.srv import *
 from sensor_msgs.msg import Image
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src/RobotFaces'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 import robotFace
 
 class Sawyer_Face:
