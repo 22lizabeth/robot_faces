@@ -23,6 +23,9 @@ class Sawyer_Face:
     def changeEmotion(self, req):
         try:
             emotion = req.character
+            if (emotion == 'x'):
+                self._face.change_face(27)
+                return FaceResponse(True)
             self._face.change_face(ord(emotion))
             return FaceResponse(True)
         except:
