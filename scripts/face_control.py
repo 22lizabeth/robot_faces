@@ -14,9 +14,9 @@ import robotFace
 class Sawyer_Face:
 
 
-    def __init__(self):
+    def __init__(self, image, robotOn):
        
-        self._face = robotFace.robotFace()
+        self._face = robotFace.robotFace(image, robotOn)
 
         change_face_service = rospy.Service('face/change_emotion', Face, self.changeEmotion)
 
@@ -33,15 +33,33 @@ class Sawyer_Face:
 
 
 
+def main(args):
+    image = False
+    robotOn = True
+    try:
+        args[1]
+    except:
+        args.append("False")
+
+    if args[1] == "True":
+        image = True
+
+    try:
+        args[2]
+    except:
+        args.append("True")
+
+    if args[2] == "False":
+        robotOn = False
 
 
-
-    
-
-if __name__ == '__main__':
     print('ready for face commands')
     rospy.init_node('Face_Display')
 
-    face = Sawyer_Face()
+    face = Sawyer_Face(image, robotOn)
     # rospy.on_shutdown(head.clean_shutdown)
     rospy.spin()
+
+
+if __name__ == '__main__':
+    main(sys.argv)

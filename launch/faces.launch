@@ -1,5 +1,7 @@
 <launch>
-    <node pkg="robot_faces" type="face_control.py" name ="Robot_Faces" output="screen">
+    <arg name="image" default="False"/>
+    <arg name="robotOn" default="True"/>
+    <node pkg="robot_faces" type="face_control.py" name ="Robot_Faces" output="screen" args="$(arg image) $(arg robotOn)">
     </node>
     
 </launch>
