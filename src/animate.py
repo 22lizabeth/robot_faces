@@ -159,8 +159,7 @@ def animateFromSurprised(img, image, robotOn):
             faceDisplay.display_image(img)  # FOR ROBOT
         cv.waitKey(fps)
 
-    drawFace(img,'n', image)
-    return img
+    return drawFace(img,'n', image)
 
 def animateFromSad(img, image, robotOn):
     #Animation Variables

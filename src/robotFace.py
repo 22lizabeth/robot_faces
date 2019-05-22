@@ -3,6 +3,7 @@ import cv2 as cv
 import numpy as np
 from draw import*
 from animate import*
+from blink import*
 
 import face_display
 import os
@@ -52,7 +53,7 @@ class robotFace:
         self.img = np.zeros((600, 1024, 3), np.uint8)
         self.img[:] = backgroundColor
         if self.image:
-            cv.imshow('Face', self.img)  # FOR LAPTOP
+            cv.imshow('Face', self.img)  # FOR COMPUTER
         if self.robotOn:
             self.faceDisplay.display_image(self.img)  # FOR ROBOT
         k = ord('n')
@@ -60,6 +61,10 @@ class robotFace:
         self.img = drawFace(self.img, chr(k))
         if self.robotOn:
             self.faceDisplay.display_image(self.img)  # FOR ROBOT
+        scheduler = BackgroundScheduler()
+        self.blinkObj = Blink(chr(self.currentFace),self.img,scheduler,self.image,self.robotOn,self.faceDisplay)
+        self.blinkObj.addJob()
+        self.blinkObj.startSched()    
 
 
     def closing_handle(self):
@@ -67,7 +72,8 @@ class robotFace:
         self.img.fill(255)
         if self.robotOn:
             self.faceDisplay.display_image(self.img)  # FOR ROBOT
-        cv.destroyAllWindows()  # How will this work with robot?
+        self.blinkObj.stopSched()
+        cv.destroyAllWindows() 
 
     def change_face(self, k):
         if k == self.escKey:
@@ -77,9 +83,10 @@ class robotFace:
             self.img = animateFace(self.img, chr(self.currentFace), chr(k), faceDisplay, self.image, self.robotOn)
             self.currentFace = k
             if self.image:
-                cv.imshow('Face', self.img)  # FOR LAPTOP
+                cv.imshow('Face', self.img)  # FOR COMPUTER
             if self.robotOn:
                 self.faceDisplay.display_image(self.img)  # FOR ROBOT
+            self.blinkObj.updateCurrentFace(chr(self.currentFace),self.img)    
             return True
 
 

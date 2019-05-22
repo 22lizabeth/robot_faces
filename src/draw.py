@@ -10,23 +10,11 @@ backgroundColor = white
 faceColor = black
 eyeColor = green
 
-def drawFace(img, faceType, image = False):
-    #Draw face elements that remain unchanged based on facial expession
-    drawInnerEye(img)
+def drawFace(img, faceType, computerImage = False, drawIris = True):
+    if drawIris:
+        drawInnerEye(img)
     drawNose(img)
-
-    if faceType == 'n':
-        drawNeutralFace(img, image)
-    elif faceType == 's':
-        drawSurpriseFace(img, image)
-    elif faceType == 'd':
-        drawSadFace(img, image)
-    elif faceType == 'a':
-        drawAngryFace(img, image)
-    elif faceType == 'h':
-        drawHappyFace(img, image)
-
-    return img
+    return drawDict[faceType](img,computerImage)
 
 def drawInnerEye(img):
     cv.ellipse(img,(280,230),(45,80),0,0,360,eyeColor,-1) #leftIris
@@ -63,7 +51,6 @@ def drawNeutralFace(img, image):
         cv.imshow('Face',img)
 
     return img
-
 
 def drawSurpriseFace(img, image):
                     
@@ -190,3 +177,6 @@ def drawAngryFace(img, image):
 
 def drawHappyFace(img, image):
     return img
+
+drawDict = {'n': drawNeutralFace, 's': drawSurpriseFace, 'd': drawSadFace, 'a': drawAngryFace, 'h': drawHappyFace}
+
