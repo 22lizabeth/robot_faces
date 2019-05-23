@@ -3,7 +3,7 @@ import intera_interface
 import rospy
 import math
 import os
-import cv2
+import cv2 as cv
 import cv_bridge
 from intera_interface import CHECK_VERSION
 from robot_faces.srv import *
@@ -22,10 +22,12 @@ class Sawyer_Face:
 
     def changeEmotion(self, req):
         try:
+            print("first spot")
             emotion = req.character
             if (emotion == 'x'):
                 self._face.change_face(27)
                 return FaceResponse(True)
+            print("second spot")    
             self._face.change_face(ord(emotion))
             return FaceResponse(True)
         except:
@@ -58,7 +60,12 @@ def main(args):
 
     face = Sawyer_Face(image, robotOn)
     # rospy.on_shutdown(head.clean_shutdown)
-    rospy.spin()
+    if (image):
+        while (face.changeEmotion(chr(cv.waitKey()))):
+            pass
+
+    rospy.spin()  
+    # rospy.on_shutdown(face._face.closing_handle())
 
 
 if __name__ == '__main__':

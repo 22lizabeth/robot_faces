@@ -17,13 +17,14 @@ eyeColor = green
 blinkFPS = .2
 
 class Blink:
-    def __init__(self,currentFace,img,scheduler,computerImage,robotOn,faceDisplay):
+    def __init__(self,currentFace,img,computerImage,robotOn,faceDisplay,drawObj):
         self.currentFace = currentFace
         self.img = img
-        self.scheduler = scheduler
+        self.scheduler = BackgroundScheduler()
         self.computerImage = computerImage
         self.robotOn = robotOn
         self.faceDisplayObj = faceDisplay
+        self.drawObj = drawObj
 
         logging.basicConfig()
         self.blinkDict = {'n': self.blinkNeutral,'s': self.blinkSurprised, 'd': self.blinkSad, 'a': self.blinkAngry, 'h': self.blinkHappy}
@@ -47,7 +48,7 @@ class Blink:
 
     def blinkNeutral(self):
         #CloseEyes
-        self.img = drawFace(self.img,'n',self.computerImage,False)
+        self.img = self.drawObj.drawFace('n',False)
         
         #Erase top line of eye
         #LeftEye
@@ -62,28 +63,27 @@ class Blink:
         cv.ellipse(self.img,(744,141),(200,180),180,240,300,faceColor,thickness=4) #rightBottomEyeArch
         cv.ellipse(self.img,(280,141),(200,180),180,240,300,faceColor,thickness=4) #leftBottomEyeArch
 
-        #Pause
+        #Display image with eyes closed for some milliseconds
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img) 
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
         time.sleep(blinkFPS)
-        #cv.waitKey(5000)
 
-        #OpenEyes
+        #OpenEyes and display
         cv.ellipse(self.img,(744,141),(200,180),180,240,300,backgroundColor,thickness=4) #rightBottomEyeArch
         cv.ellipse(self.img,(280,141),(200,180),180,240,300,backgroundColor,thickness=4) #leftBottomEyeArch
         
         #Show face eyes open again
-        self.img = drawFace(self.img,'n',self.computerImage)
+        self.img = self.drawObj.drawFace('n')
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img)
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
 
     def blinkSurprised(self):
         #CloseEyes
-        self.img = drawFace(self.img,'s',self.computerImage,False)
+        self.img = self.drawObj.drawFace('s',False)
         
         #Erase top line of eye
         #LeftEye
@@ -98,25 +98,25 @@ class Blink:
         cv.ellipse(self.img,(280,150),(200,180),180,240,300,faceColor,thickness=4) #leftBottomEyeArch
         cv.ellipse(self.img,(744,150),(200,180),180,240,300,faceColor,thickness=4) #rightBottomEyeArch
 
-        #Pause
+        #Display image with eyes closed for some milliseconds
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img) 
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
         time.sleep(blinkFPS)
 
-        #OpenEyes
+        #OpenEyes and display
         cv.ellipse(self.img,(280,150),(200,180),180,240,300,backgroundColor,thickness=4) #leftBottomEyeArch
         cv.ellipse(self.img,(744,150),(200,180),180,240,300,backgroundColor,thickness=4) #rightBottomEyeArch
-        self.img = drawFace(self.img,'s',self.computerImage)
+        self.img = self.drawObj.drawFace('s')
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img)
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
 
     def blinkAngry(self):
         #CloseEyes
-        self.img = drawFace(self.img,'a',self.computerImage,False)
+        self.img = self.drawObj.drawFace('a',False)
         
         #Erase top line of eye
         #LeftEye
@@ -131,26 +131,26 @@ class Blink:
         cv.ellipse(self.img,(280,351),(200,66),0,246,294,faceColor,thickness=4) #leftBottomEyeArch
         cv.ellipse(self.img,(744,351),(200,66),0,246,294,faceColor,thickness=4) #rightBottomEyeArch
 
-        #Pause
+        #Display image with eyes closed for some milliseconds
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img)
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
         time.sleep(blinkFPS)
 
-        #OpenEyes
+        #Display image with open eyes
         cv.ellipse(self.img,(280,351),(200,66),0,246,294,backgroundColor,thickness=4) #leftBottomEyeArch
         cv.ellipse(self.img,(744,351),(200,66),0,246,294,backgroundColor,thickness=4) #rightBottomEyeArch
         
-        self.img = drawFace(self.img,'a',self.computerImage)
+        self.img = self.drawObj.drawFace('a')
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img)
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
 
     def blinkSad(self):
         #CloseEyes
-        self.img = drawFace(self.img,'d',self.computerImage,False)
+        self.img = self.drawObj.drawFace('d',False)
         
         #Erase top line of eye
         #LeftEye
@@ -165,23 +165,22 @@ class Blink:
         cv.ellipse(self.img,(280,111),(200,180),180,240,300,faceColor,thickness=4) #leftBottomEyeArch
         cv.ellipse(self.img,(744,111),(200,180),180,240,300,faceColor,thickness=4) #rightBottomEyeArch
 
-        #Pause
+        #Display image with eyes closed for some milliseconds
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img)
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
         time.sleep(blinkFPS)
 
-
-        #OpenEyes
+        #OpenEyes and display
         cv.ellipse(self.img,(280,111),(200,180),180,240,300,backgroundColor,thickness=4) #leftBottomEyeArch
         cv.ellipse(self.img,(744,111),(200,180),180,240,300,backgroundColor,thickness=4) #rightBottomEyeArch
         
-        self.img = drawFace(self.img,'d',self.computerImage)
+        self.img = self.drawObj.drawFace('d')
         if self.computerImage:
-            cv.imshow('Face',self.img)
+            cv.imshow('Face',self.img) #COMPUTER DISPLAY
         if self.robotOn:
-            self.faceDisplayObj.display_image(self.img)
+            self.faceDisplayObj.display_image(self.img) #ROBOT DISPLAY
 
     def blinkHappy(self):
         return
