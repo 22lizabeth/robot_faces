@@ -19,6 +19,7 @@ class Sawyer_Face:
         self._face = robotFace.robotFace(image, robotOn)
 
         change_face_service = rospy.Service('face/change_emotion', Face, self.changeEmotion)
+        speak_service = rospy.Service('face/say', Face, self.speak)
 
     def changeEmotion(self, req):
         try:
@@ -27,6 +28,14 @@ class Sawyer_Face:
                 self._face.change_face(27)
                 return FaceResponse(True)
             self._face.change_face(ord(emotion))
+            return FaceResponse(True)
+        except:
+            return FaceResponse(False)
+
+    def speak(self, req):
+        try:
+            os.system("say \"" + req.character + "\"")
+            self._face.speak(req.character)
             return FaceResponse(True)
         except:
             return FaceResponse(False)

@@ -4,6 +4,7 @@ import numpy as np
 from draw import*
 from animate import*
 from blink import*
+from talk import*
 
 import face_display
 import os
@@ -47,6 +48,7 @@ class robotFace:
         self.white = 255, 255, 255
         self.backgroundColor = white
 
+
         #Fill background with background color pixels
         self.img = np.zeros((600, 1024, 3), np.uint8)
         self.img[:] = backgroundColor
@@ -76,7 +78,8 @@ class robotFace:
         #Start the blinking
         self.blinkObj = Blink(chr(self.currentFace),self.img,self.image,self.robotOn,self.faceDisplay,self.drawObj)
         self.blinkObj.addJob()
-        self.blinkObj.startSched()    
+        self.blinkObj.startSched()
+        self.speachObj = Speech(chr(self.currentFace),self.img,self.image,self.robotOn,self.faceDisplay,self.drawObj)
 
 
     def closing_handle(self):
@@ -89,6 +92,10 @@ class robotFace:
             cv.destroyAllWindows() #CLOSE COMPUTER DISPLAY
         self.blinkObj.stopSched() 
 
+    def speak(self, speech):
+            self.speachObj.updateCurrentFace(chr(self.currentFace), self.img)
+            self.speachObj.speak(speech)    
+
     def change_face(self, k):
         if k == self.escKey:
             self.closing_handle()
@@ -100,7 +107,7 @@ class robotFace:
                 cv.imshow('Face', self.img)  #COMPUTER DISPLAY
             if self.robotOn:
                 self.faceDisplay.display_image(self.img)  #ROBOT DISPLAY
-            self.blinkObj.updateCurrentFace(chr(self.currentFace),self.img)    
+            self.blinkObj.updateCurrentFace(chr(self.currentFace),self.img)
             return True
 
 
