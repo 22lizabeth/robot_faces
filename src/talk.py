@@ -7,6 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 import time
 import math
+from speech_animation import*
 
 #Colors (BGR)
 black = 0, 0, 0
@@ -26,7 +27,8 @@ class Speech:
         self.robotOn = robotOn
         self.faceDisplayObj = faceDisplay
         self.drawObj = drawObj
-
+        self.last_char = 'o'
+        self.animateObj = Speeech_Animation(self.img,self.faceDisplayObj,self.drawObj,self.computerImage,self.robotOn)
         logging.basicConfig()
         self.speachDict = {'o': self.OO}
 
@@ -36,7 +38,10 @@ class Speech:
 
     def say_sound(self, char):
         # pass
-        self.speachDict[char]()
+        print "2"
+        print char
+        self.animateObj.speak(self.last_char, char)
+        # self.last_char = char
 
     def OO(self):
         #Draw O shape
@@ -67,24 +72,24 @@ class Speech:
         speak
         """
         itertations = math.ceil(len(words_to_say) * .25)
-        
+        print "1"
         for i in range(int(itertations)):
             letter = 'o'
             cv.rectangle(self.img, (801, 540), (213, 470), backgroundColor, thickness=-1)  # neutralmouth
-            self.say_sound(letter)
-            self.img = self.drawObj.drawFace(str(self.currentFace), False)
-            if self.computerImage:
-                cv.imshow('Face', self.img)  # COMPUTER DISPLAY
-                cv.waitKey(200)
-            if self.robotOn:
-                self.faceDisplayObj.display_image(self.img)  # ROBOT DISPLAY
-                time.sleep(.2)
+            # self.say_sound(letter)
+            self.say_sound('c')
+            # if self.computerImage:
+            #     cv.imshow('Face', self.img)  # COMPUTER DISPLAY
+            #     cv.waitKey(200)
+            # if self.robotOn:
+            #     self.faceDisplayObj.display_image(self.img)  # ROBOT DISPLAY
+            #     time.sleep(.2)
         """
         Draw Current Mouth
         """
-        self.img = self.drawObj.drawFace(str(self.currentFace), False)
-        if self.computerImage:
-            cv.imshow('Face', self.img)  # COMPUTER DISPLAY
-        if self.robotOn:
-            self.faceDisplayObj.display_image(self.img)  # ROBOT DISPLAY
+        # self.img = self.drawObj.drawFace(str(self.currentFace), False)
+        # if self.computerImage:
+        #     cv.imshow('Face', self.img)  # COMPUTER DISPLAY
+        # if self.robotOn:
+        #     self.faceDisplayObj.display_image(self.img)  # ROBOT DISPLAY
 

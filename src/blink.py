@@ -32,6 +32,7 @@ class Blink:
     def blink(self):
         self.img[:] = backgroundColor
         self.blinkDict[self.currentFace]()
+        return
 
     def addJob(self):
         self.blinkJob = self.scheduler.add_job(self.blink, 'interval', seconds=(random.uniform(3.0,5.0)),max_instances=2)
