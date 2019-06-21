@@ -1,7 +1,8 @@
 <launch>
     <arg name="image" default="False"/>
     <arg name="robotOn" default="True"/>
-    <node pkg="robot_faces" type="face_control.py" name ="Robot_Faces" output="screen" args="$(arg image) $(arg robotOn)">
+    <arg name="dictionaryFile" default="$(find robot_faces)/src/cmudict-modified.txt"/>
+    <node pkg="robot_faces" type="face_control.py" name ="$(anon Robot_Faces)" output="screen" args="$(arg image) $(arg robotOn) $(arg dictionaryFile)">
     </node>
     
 </launch>

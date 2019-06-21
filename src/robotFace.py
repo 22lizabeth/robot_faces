@@ -4,7 +4,7 @@ import numpy as np
 from draw import*
 from animate import*
 from blink import*
-from talk import*
+from speech_animation import*
 
 import face_display
 import os
@@ -38,7 +38,7 @@ def getKey():
 
 
 class robotFace:
-    def __init__(self, image = False, robotOn = True):
+    def __init__(self, image=False, robotOn=True, dictPath="cmudict-modified.txt"):
         self.image = image
         self.robotOn = robotOn
         self.currentFace = 0
@@ -79,8 +79,7 @@ class robotFace:
         self.blinkObj = Blink(chr(self.currentFace),self.img,self.image,self.robotOn,self.faceDisplay,self.drawObj)
         self.blinkObj.addJob()
         self.blinkObj.startSched()
-        self.speachObj = Speech(chr(self.currentFace),self.img,self.image,self.robotOn,self.faceDisplay,self.drawObj)
-
+        self.speachObj = Speech_Animation(self.img, self.faceDisplay, self.drawObj, self.image, self.robotOn, dictPath)
 
     def closing_handle(self):
         ###Throw sleeping face in here when done
@@ -93,7 +92,6 @@ class robotFace:
         self.blinkObj.stopSched() 
 
     def speak(self, speech):
-            self.speachObj.updateCurrentFace(chr(self.currentFace), self.img)
             self.speachObj.speak(speech)    
 
     def change_face(self, k):

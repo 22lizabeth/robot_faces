@@ -14,9 +14,9 @@ import robotFace
 class Sawyer_Face:
 
 
-    def __init__(self, image, robotOn):
+    def __init__(self, image, robotOn, dictPath):
        
-        self._face = robotFace.robotFace(image, robotOn)
+        self._face = robotFace.robotFace(image, robotOn, dictPath)
 
         change_face_service = rospy.Service('face/change_emotion', Face, self.changeEmotion)
         speak_service = rospy.Service('face/say', Face, self.speak)
@@ -34,7 +34,7 @@ class Sawyer_Face:
 
     def speak(self, req):
         try:
-            os.system("say \"" + req.character + "\"")
+            print req
             self._face.speak(req.character)
             return FaceResponse(True)
         except:
@@ -61,11 +61,11 @@ def main(args):
     if args[2] == "False":
         robotOn = False
 
-
+    print args[3]
     print('ready for face commands')
     rospy.init_node('Face_Display')
 
-    face = Sawyer_Face(image, robotOn)
+    face = Sawyer_Face(image, robotOn, args[3])
     # rospy.on_shutdown(head.clean_shutdown)
     if (image):
         while (face.changeEmotion(chr(cv.waitKey()))):

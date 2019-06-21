@@ -3,7 +3,11 @@ import numpy as np
 import cv2 as cv
 from draw import*
 import time
-import face_display
+from draw_mouths import*
+import string
+import pyttsx3
+import threading
+import syllableizer
 
 #Colors (BGR)
 black = 0, 0, 0
@@ -14,7 +18,7 @@ backgroundColor = white
 faceColor = black
 eyeColor = green
 
-fps = 30
+fps = 150
 
 #Neutral Face Paramters
 nBottomEyeCenterY1 = 141
@@ -35,184 +39,352 @@ nMouthY1 = 493
 nMouthY2 = 10
 
 
-class Speeech_Animation:
-    def __init__(self, img, faceDisplayObj, drawObj, computerImage, robotOn):
+class Speech_Animation:
+    def __init__(self, img, faceDisplayObj, drawObj, computerImage, robotOn, dictPath):
         self.img = img
         self.faceDisplayObj = faceDisplayObj
         self.drawObj = drawObj
         self.computerImage = computerImage
         self.robotOn = robotOn
+        self.mouth = Mouth(img)
+        self.drawObj.updateMouthObj(self.mouth)
+        self.engine = pyttsx3.init()
+        self.syllableizer = syllableizer.Syllableizer(dictPath)
+        '''
+        text to speech options
+        '''
+        self.engine.setProperty('rate', 140)
+        self.engine.setProperty('voice', 'english rp')
+        try:
+            import face_display
+            self.robot_display = face_display.RobotDisplay()
+        except:
+            print "Robot off"
 
-        self.animateToDict = {'o': self.animateToOO}
-        self.animateFromDict = {'o': self.animateFromOO}
 
-    def speak(self, animateFrom, animateTo):
-        print(animateFrom, animateTo)
-        if animateFrom == animateTo:
-            return self.img
-        if animateFrom != 'c':
-            self.img = self.animateFromDict[animateFrom]()
-        if animateTo != 'c':
-            # print("from neutral")
-            self.img = self.animateToDict[animateTo]()
+        self.last = self.drawObj.getCurrentFace()
+
+        self.animateToDict = {
+            'aa' : self.animateToAA,
+            'oo': self.animateToOO,
+            'cc': self.animateToC,
+            'ff' :self.animateToFF,
+            'kk' :self.animateToKK,
+            'n': self.animateToNeutralFace,
+            's': self.animateToSurpriseFace,
+            'd': self.animateToSadFace, 
+            'a': self.animateToAngryFace, 
+            'h': self.animateToHappyFace,
+            'default': self.animateToDefault}
+        self.animateFromDict = {
+            'aa' : self.animateFromAA,
+            'oo': self.animateFromOO,
+            'cc': self.animateFromC,
+            'ff' : self.animateFromFF,
+            'kk' : self.animateFromKK,
+            'n': self.animateFromNeutralFace,
+            's': self.animateFromSurpriseFace,
+            'd': self.animateFromSadFace, 
+            'a': self.animateFromAngryFace, 
+            'h': self.animateFromHappyFace,
+            'default': self.animateFromDefault
+            }
+
+        self.soundDict = {
+            "AA" : "aa",
+            "AE" : "aa",
+            "AH" : "aa",
+            "AO" : "oo",
+            "AW" : "aa",
+            "AY" : "aa",
+            "B"  : "cc",
+            "CH": "kk",
+            "D" : "kk",
+            "DH": "kk",
+            "EH" : "default",
+            "ER": "default",
+            "EY": "aa",
+            "F" : "ff",
+            "G": "kk",
+            "HH": "kk",
+            "IH": "default",
+            "IY" : "aa",
+            "JH": "default",
+            "K": "kk",
+            "L": "default",
+            "M" : "cc",
+            "N": "default",
+            "NG": "default",
+            "OW" : "oo",
+            "OY" : "oo",
+            "P" : "cc",
+            "R": "oo",
+            "S": "kk",
+            "SH": "kk",
+            "T": "kk",
+            "TH": "kk",
+            "UH": "default",
+            "UW" : "oo",
+            "V" : "ff",
+            "W": "oo",
+            "Y": "default",
+            "Z": "kk",
+            "ZH": "default",
+            "PUNCTUATION" : "cc",
+        }
+    def secToMs(self, sec):
+        print (sec, sec*1000)
+        return sec * 1000
+
+    def speak(self, Say):
+        print Say
+        self.engine.say(Say)
+        print "entering syllableizer"
+        self.syllableizer.split_words(Say)
+        # numWords = len(Say.split())
+        # print ("numwords", numWords)
+        # print len(Say)
+        # numLetters = len(Say.replace(" ", ""))
+        # print ("numLetters", numLetters)
+        # totalSec = (numWords / 140.0) * 60.0
+        # print ("totalSec", totalSec)
+        # secPerWord = totalSec / numWords
+        # print ("secPerWord", secPerWord)
+        # fps = totalSec / (2* numLetters)
+        # print ("fps", fps)
+        thread = threading.Thread(target=self.engine.runAndWait)
+        thread.start()
+        # self.animateFromC()
+        # self.img = self.mouth.drawFF()== "." or a == "," or a == "?" or a == "!"
+        # self.img = self.mouth.drawOO()== "." or a == "," or a == "?" or a == "!"
+        self.last = self.drawObj.getCurrentFace()
+        self.drawObj.toggleDrawMouth()
+        syllables_list = self.syllableizer.getList()
+        for word in syllables_list:
+            print word
+            sounds = word.split()
+            for sound in sounds:
+                mouth_shape = self.soundDict[sound]
+                print mouth_shape
+                if mouth_shape != self.last:
+                    self.animateFromDict[self.last]()
+                    pass
+                # cv.waitKey(15)
+                time.sleep(0.03)
+                if mouth_shape != self.last:
+                    self.animateToDict[mouth_shape]()
+                    pass
+                # cv.waitKey(int((self.secToMs(fps) - 15)))
+                time.sleep(.075)
+                if (sound == 'PUNCTUATION'):
+                    print ("punctiation")
+                    # cv.waitKey(int(self.secToMs(fps) * 2))
+                    time.sleep(.09)
+                self.last = mouth_shape
+                # string = raw_input('hello')
+
+        self.mouth.eraseRestTalking()
+        self.mouth.eraseMouth(self.last)
+        self.img = self.mouth.drawMouth(self.drawObj.getCurrentFace())
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        # cv.waitKey(100)
+        self.drawObj.toggleDrawMouth()
+        time.sleep(.001)
+        self.last = 'c'
         return self.img
 
+    def animateFromDefault(self):
+        self.img = self.mouth.eraseMouth('default')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateToDefault(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('default')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+
+    def animateFromFF(self):
+        self.img = self.mouth.eraseMouth('ff')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateToFF(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('ff')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateFromKK(self):
+        self.img = self.mouth.eraseMouth('kk')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face', self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateToKK(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('kk')
+        if self.computerImage:
+            cv.imshow('Face', self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateFromC(self):
+        self.img = self.mouth.eraseMouth('cc')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateToC(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('cc')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateFromAA(self):
+        self.img = self.mouth.eraseMouth('aa')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateToAA(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('aa')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+
     def animateFromOO(self):
-        print "from O to C"
-        #Animation Variables
-        bottomEyeArchMaxChange = 3
-        eyebrowMaxChange = 6
-        upperEyeArchMaxChange = 6
-        eyeSideLineMaxChange = 12
-        mouthMaxChange = 9
 
-        bottomEyeCenterY1 = 150
-        eyebrowY1 = 260
-        eyebrowY2 = 190
-        archY1 = 300
-        archY2 = 180
-        eyeLineY2 = 270
-        eyeLineY1 = 198
-        upperMouthY1 = 520
-        upperMouthY2 = 40
-        lowerMouthY1 = 488
-        lowerMouthY2 = 40
-        upperMouthX2 = 40
-        lowerMouthX2 = 50
-
-        maxChange = max([bottomEyeArchMaxChange, eyebrowMaxChange,
-                         upperEyeArchMaxChange, eyeSideLineMaxChange, mouthMaxChange])
-
-        #Animate from surprised face to neutral face
-        for i in range(maxChange):
-
-            #Mouth animation to neutral mouth
-            if i < mouthMaxChange and i > 0:
-
-                #Animate upper mouth until it melds with lower mouth then stop animating upper mouth
-                if i < 8:
-                    cv.ellipse(self.img, (512, upperMouthY1), (upperMouthX2, upperMouthY2),
-                               0, 190, 350, backgroundColor, thickness=4)  # upperMouthArch
-                    if i < 7:
-                        #Decrease row radius of upper mouth to move it close to lower mouth
-                        upperMouthY2 = upperMouthY2 - 6
-                        #Decrease center y-coordinate of upper mouth to keep it matching with lower mouth as they come together
-                        if i == 2:
-                            upperMouthY1 = upperMouthY1 - 5
-                        else:
-                            upperMouthY1 = upperMouthY1 - 3
-                        #Increase upper mouth column radius to widen the mouth until it is nearly straight
-                        if i == 2 or i == 3:
-                            upperMouthX2 = upperMouthX2 + 5
-                        else:
-                            upperMouthX2 = upperMouthX2 + 2
-
-                        cv.ellipse(self.img, (512, upperMouthY1), (upperMouthX2, upperMouthY2),
-                                   0, 190, 350, faceColor, thickness=4)  # upperMouthArch
-
-                #Animate Lower Mouth
-                cv.ellipse(self.img, (512, lowerMouthY1), (lowerMouthX2, lowerMouthY2),
-                           180, 220, 320, backgroundColor, thickness=4)  # lowerMouthArch
-                #Decrease row radius of lower mouth to move it closer to upper mouth
-                if i < 4:
-                    lowerMouthY2 = lowerMouthY2 - 10
-                #Increase center y-coordinate of lower mouth for the first set of animation iterations
-                if i < 4:
-                    lowerMouthY1 = lowerMouthY1 + 3
-                #Decrease centery y-coordinate of lower mouth for the last of the animation iterations
-                elif i > 4:
-                    lowerMouthY1 = lowerMouthY1 - 1
-                #Increase lower mouth column radius to widen the mouth until it is nearly straight
-                if i > 1:
-                    lowerMouthX2 = lowerMouthX2 + 6
-                else:
-                    lowerMouthX2 = lowerMouthX2 + 3
-                cv.ellipse(self.img, (512, lowerMouthY1), (lowerMouthX2, lowerMouthY2),
-                           180, 220, 320, faceColor, thickness=4)  # lowerMouthArch
-            # time.sleep(1)
-            if self.computerImage:
-                cv.imshow('Face', self.img)  # COMPUTER DISPLAY
-                cv.waitKey(20)
-            if self.robotOn:
-                self.faceDisplayObj.display_image(self.img)  # ROBOT DISPLAY
-                time.sleep(.035)
+        self.img = self.mouth.eraseMouth('oo')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
         return self.img
 
     def animateToOO(self):
-        print("from c to O")
-        #Animation Variables
-        bottomEyeArchMaxChange = 4
-        eyebrowMaxChange = 6
-        upperEyeArchMaxChange = 6
-        eyeSideLineMaxChange = 6
-        mouthMaxChange = 8
-        maxChange = max([bottomEyeArchMaxChange, eyebrowMaxChange,
-                         upperEyeArchMaxChange, eyeSideLineMaxChange, mouthMaxChange])
 
-        bottomEyeCenterY1 = nBottomEyeCenterY1
-        eyebrowY1 = nEyebrowY1
-        eyebrowY2 = nEyebrowY2
-        archY1 = nArchY1
-        archY2 = nArchY2
-        eyeLineY1 = nEyeLineY1
-        eyeLineY2 = nEyeLineY2
-        upperMouthY1 = nUpperMouthY1
-        upperMouthY2 = nUpperMouthY2
-        upperMouthX2 = nUpperMouthX2
-        lowerMouthY1 = nLowerMouthY1
-        lowerMouthY2 = nLowerMouthY2
-        lowerMouthX2 = nLowerMouthX2
-
-        #Animation to surprised face from neutral face
-        for i in range(maxChange):
-
-            #Mouth animation to neutral mouth
-            if i >= maxChange - mouthMaxChange:
-                #Animate upper mouth after it unmelds with lower mouth
-                if i > 2:
-                    cv.ellipse(self.img, (512, upperMouthY1), (upperMouthX2, upperMouthY2),
-                               0, 190, 350, backgroundColor, thickness=4)  # upperMouthArch
-                if i > 1:
-                    #Increase row radius to mover upper mouth further from lower mouth
-                    upperMouthY2 = upperMouthY2 + 6
-                    #Increase center y-coordinate of upper mouth to keep it matching with lower mouth as they pull apart
-                    if i == 6:
-                        upperMouthY1 = upperMouthY1 + 5
-                    else:
-                        upperMouthY1 = upperMouthY1 + 3
-                    #Decrease upper mouth column radius to shrink the mouth
-                    if i == 6 or i == 5:
-                        upperMouthX2 = upperMouthX2 - 5
-                    else:
-                        upperMouthX2 = upperMouthX2 - 2
-                    cv.ellipse(self.img, (512, upperMouthY1), (upperMouthX2, upperMouthY2),
-                               0, 190, 350, faceColor, thickness=4)  # upperMouthArch
-
-                #Animate lower mouth
-                cv.ellipse(self.img, (512, lowerMouthY1), (lowerMouthX2, lowerMouthY2),
-                           180, 220, 320, backgroundColor, thickness=4)  # lowerMouthArch
-                #Increase row radius to mover lower mouth further from upper mouth
-                if i > 4:
-                    lowerMouthY2 = lowerMouthY2 + 10
-                #Decrease center y-coordinate of lower mouth for the last set of animation iterations
-                if i > 4:
-                    lowerMouthY1 = lowerMouthY1 - 3
-                #Increase centery y-coordinate of lower mouth for the first set of the animation
-                elif i < 4:
-                    lowerMouthY1 = lowerMouthY1 + 1
-                #Decrease lower mouth column radius to shrink the mouth
-                if i == 7:
-                    lowerMouthX2 = lowerMouthX2 - 3
-                else:
-                    lowerMouthX2 = lowerMouthX2 - 6
-                cv.ellipse(self.img, (512, lowerMouthY1), (lowerMouthX2, lowerMouthY2),
-                           180, 220, 320, faceColor, thickness=4)  # lowerMouthArch
-            # time.sleep(1)
-            if self.computerImage:
-                cv.imshow('Face', self.img)  # COMPUTER DISPLAY
-                cv.waitKey(20)
-            if self.robotOn:
-                self.faceDisplayObj.display_image(self.img)  # ROBOT DISPLAY
-                time.sleep(.035)
-
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('oo')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
         return self.img
+
+
+
+    def animateFromNeutralFace(self):
+        self.img = self.mouth.eraseMouth('n')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateToNeutralFace(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('n')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateFromSurpriseFace(self):
+        self.img = self.mouth.eraseMouth('s')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+    
+    def animateToSurpriseFace(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('s')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+
+    def animateFromSadFace(self):
+        self.img = self.mouth.eraseMouth('d')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+    
+    def animateToSadFace(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('s')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateFromAngryFace(self):
+        self.img = self.mouth.eraseMouth('a')
+        self.img = self.mouth.drawRestTalking()
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateToAngryFace(self):
+        self.mouth.eraseRestTalking()
+        self.img = self.mouth.drawMouth('a')
+        if self.computerImage:
+            cv.imshow('Face',self.img)
+        if self.robotOn:
+            self.robot_display.display_image(self.img)
+        return self.img
+
+    def animateFromHappyFace(self):
+        return
+
+    def animateToHappyFace(self):
+        return

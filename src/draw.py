@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import numpy as np 
 import cv2 as cv
+from draw_mouths import *
 
 #Colors (BGR)
 black = 0,0,0
@@ -11,15 +12,38 @@ faceColor = black
 eyeColor = green
 
 class Draw:
-    def __init__(self,img):
+    def __init__(self, img):
+        self.drawMouth = True
+        self.mouthObj = Mouth(img)
+        print("here")
+        self.currentFace = 'n'
         self.img = img
         self.drawDict = {'n': self.drawNeutralFace, 's': self.drawSurpriseFace, 'd': self.drawSadFace, 'a': self.drawAngryFace, 'h': self.drawHappyFace}
 
     def drawFace(self,faceType,drawIris = True):
+        if not self.drawMouth:
+            self.img = self.mouthObj.drawCurrentMouth()
+
         if drawIris:
             self.img = self.drawInnerEye()
+            
         self.img = self.drawNose()
+
+        self.currentFace = faceType
+
         return self.drawDict[faceType]()
+
+    def getCurrentFace(self):
+        return self.currentFace
+
+    def updateMouthObj(self, newMouthObj):
+        self.mouthObj = newMouthObj
+
+    def toggleDrawMouth(self):
+        if self.drawMouth:
+            self.drawMouth = False
+            return
+        self.drawMouth = True
     
     def drawInnerEye(self):
         cv.ellipse(self.img,(280,230),(45,80),0,0,360,eyeColor,-1) #leftIris
@@ -51,7 +75,8 @@ class Draw:
         cv.ellipse(self.img,(744,170),(190,70),0,235,315,faceColor,thickness=5) #rightEyebrow
 
         #mouth
-        cv.ellipse(self.img,(512,493),(95,10),180,220,320,faceColor,thickness=4) #neutralmouth
+        if self.drawMouth:
+            cv.ellipse(self.img,(512,493),(95,10),180,220,320,faceColor,thickness=4) #neutralmouth
         return self.img
 
     def drawSurpriseFace(self):                
@@ -70,8 +95,9 @@ class Draw:
         cv.ellipse(self.img,(744,260),(190,190),0,235,315,faceColor,thickness=5) #rightEyebrow
 
         #mouth
-        cv.ellipse(self.img,(512,520),(40,40),0,190,350,faceColor,thickness=4) #upperMouthArch
-        cv.ellipse(self.img,(512,488),(50,40),180,220,320,faceColor,thickness=4) #lowerMouthArch
+        if self.drawMouth:
+            cv.ellipse(self.img,(512,520),(40,40),0,190,350,faceColor,thickness=4) #upperMouthArch
+            cv.ellipse(self.img,(512,488),(50,40),180,220,320,faceColor,thickness=4) #lowerMouthArch
         return self.img
 
     def drawSadFace(self): 
@@ -98,7 +124,8 @@ class Draw:
         cv.ellipse(self.img,(744,85),(190,51),180,225,305,faceColor,thickness=5) #rightEyebrow
 
         #mouth
-        cv.ellipse(self.img,(512,560),(95,68),0,220,320,faceColor,thickness=4) #sadmouth
+        if self.drawMouth:
+            cv.ellipse(self.img,(512,560),(95,68),0,220,320,faceColor,thickness=4) #sadmouth
 
         return self.img
 
@@ -165,7 +192,8 @@ class Draw:
         cv.ellipse(self.img,(744,222),(190,70),340,275,325,faceColor,thickness=5) #rightEyebrowCurvedPart
 
         #mouth
-        cv.ellipse(self.img,(512,545),(95,51),0,229,311,faceColor,thickness=4) #angrymouth
+        if self.drawMouth:
+            cv.ellipse(self.img,(512,545),(95,51),0,229,311,faceColor,thickness=4) #angrymouth
 
         return self.img
 
