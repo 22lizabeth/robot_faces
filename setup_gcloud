@@ -4,19 +4,23 @@ for this project all that needs to be done is:
 * gcloud config set project sawyer-demo
 
 instructions from scratch:
+-------------------------------------------------------
 
-set up gcloud 
+install and set up gcloud:
 sudo pip install --upgrade google-cloud-texttospeech
 sudo snap install google-cloud-sdk --classic
 pip install --upgrade google-cloud-storage
 
 log in:
 gcloud auth login
+
 set up project:
 gcloud config set project [name]
 gcloud iam service-accounts create [NAME]
 gcloud projects add-iam-policy-binding [PROJECT_ID] --member "serviceAccount:[NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role "roles/owner"
 gcloud iam service-accounts keys create [FILE_NAME].json --iam-account [NAME]@[PROJECT_ID].iam.gserviceaccount.com
 export GOOGLE_APPLICATION_CREDENTIALS="[PATH]"
+
+----------------------------------------------------------
 To log out:
 gcloud auth revoke <your_account>
