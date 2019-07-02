@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "sawyer-demo",
+  "private_key_id": "55c728b05d78ed52e4c01f5af8a816ec7283f29e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDHs/wBvle5tLeO\nw1vzy2D2JpyvT3osFptFI4Gdd9vzE4rJG6PlhIY9WNCVUm3YjGdH8RWBy1f34XBj\n1vidjhkMLm2Y6RvVJhiOygu89fxjJPnOKd67o/twkVWrS7sKhd8PZKcWitIr4KOr\noVCIklTmXdu+yPbMaEwwSEmXBp3AANBiuHguj9QW+o370A+020o/0Gt6oeu9xW/Z\nriyNQNuK5ldm7Uft3nEBHhTmFox2rdSx2szPFfZ/sWi1guPGhmxSaEw0PMpkmYz0\nAHLhpvJtNEEnqtV6L8C0+Sx5qPuzAr416V0ScQDRd+D7gATDSnbpDZa2ObAId6cP\nFC6HSqenAgMBAAECggEADZnhBn9fuyqnO8Zra1HFM06S6k+36uvJPG68I6znookI\nsUS8J2Qcvm3fmuPnzlFVsW0mgVYHkj7c6Dfaa+SjKRS6aykpN52mG4eAQCjivR/m\nEZgBbvcup06Grql0PjW66PH6fUsMIGfmzcgpU3vf42auEjLeuDI8SieKN4qAUPS+\nXXthzqoD2PF6uAsWCxguhETws6GOhMCey7tk3vISckTwYkxl3+jCdZy7FH0U9z8t\n+94JY47WwqSzASYFd6iWc2CF8p0OfxNTcqzTQuXwbaPji5Uatyw9hAzMP1+uHAsS\nMnt0OzhlFmmrVq05F961tellGMjotY4ugzYg5xsPzQKBgQDyJTQYEpoS/DT3pA+T\nTgxAXwp3vk2hxyO1QMnT5pmd5PaDWKd5R5tPzAo2+S23A87fvlj5GXjBkzgsw5fv\nwaA/ouuo34o2D7QW7k3L4W8AOX53p5ROXbr0PpUDsz+UTx3DqWbaI3iqqnkVNJ3f\niGeiuTTlL/149vnBhnCXMjMDxQKBgQDTIRzVrrXrJcPbe1nujff7qDIm+jpp5FPs\n4GbSKjK7b1BKBP5rjXpBKTHEGn8pVsJS7FYxyxva4Pn0+mBDrHS4zbbGxJEFXnS6\n7uJJ36iZeHz3nVvSt3VN1i7q6KgBvvZfM8Y8AVDuUuKXkJgdT1C+TKHVckaRX9f+\n+fZuva34ewKBgCKHHYuFM4Ubg24AbdwiV+rh4ns6npU/8R6KU30st6DlIiWOgarw\ng/v360j1dQhQubH70XILqMVpeawgY8zjPjd0wse8wFd/G73dUyiMR6ivihIDykj2\nYo8rUVJKv/kk4uiggjL+tdkYH9XfP9e8+pIgeKNpmWojRW/L/MgCd3XFAoGBAMU+\nmzy6w3RTTN6BKCypb7MpmOk3P1lsmkekAgt4pvrbbMwqTDLY8w1rWfYWtxQ83MEx\n0PkmAvkC1CLdww+WT1nTvl2GiOHWNAHsaXaQwGfY3A9NcNq00J+OaTjHcSZobK3W\npe2rYRu2TcFBsgs37XxMBalu4KSyQQ4SIvuks6J/AoGABoKFOQF2xkOVL2+jlJxS\nGkzjPi9siuafMF0K/N5LMQ//4PRosF/9f6CfnpD3kWYdRX7PbFQIcXVyujlkRoNK\np05SPJhzIPKhOxB5xk+L27aY73dXf1qhZPDgWD+wFNfb/3AYUzvFAwEGAXmQ+uFg\nnFMIBHQsFpqH41P3pUFEWZA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sawyer-demo@sawyer-demo.iam.gserviceaccount.com",
+  "client_id": "107663256620529930402",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sawyer-demo%40sawyer-demo.iam.gserviceaccount.com"
+}

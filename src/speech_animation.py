@@ -5,7 +5,7 @@ from draw import*
 import time
 from draw_mouths import*
 import string
-import pyttsx3
+import synthesizer
 import threading
 import syllableizer
 
@@ -48,13 +48,12 @@ class Speech_Animation:
         self.robotOn = robotOn
         self.mouth = Mouth(img)
         self.drawObj.updateMouthObj(self.mouth)
-        self.engine = pyttsx3.init()
+        self.synthesizer = synthesizer.Synthesizer()
         self.syllableizer = syllableizer.Syllableizer(dictPath)
         '''
         text to speech options
         '''
-        self.engine.setProperty('rate', 140)
-        self.engine.setProperty('voice', 'english rp')
+
         try:
             import face_display
             self.robot_display = face_display.RobotDisplay()
@@ -136,11 +135,11 @@ class Speech_Animation:
         print (sec, sec*1000)
         return sec * 1000
 
-    def speak(self, Say):
-        print Say
-        self.engine.say(Say)
+    def speak(self, say):
+        print say
+        self.engine.say(say)
         print "entering syllableizer"
-        self.syllableizer.split_words(Say)
+        self.syllableizer.split_words(say)
         # numWords = len(Say.split())
         # print ("numwords", numWords)
         # print len(Say)
@@ -152,14 +151,15 @@ class Speech_Animation:
         # print ("secPerWord", secPerWord)
         # fps = totalSec / (2* numLetters)
         # print ("fps", fps)
-        thread = threading.Thread(target=self.engine.runAndWait)
-        thread.start()
+        thread = threading.Thread(target=self.synthesizer.say(say))
+
         # self.animateFromC()
         # self.img = self.mouth.drawFF()== "." or a == "," or a == "?" or a == "!"
         # self.img = self.mouth.drawOO()== "." or a == "," or a == "?" or a == "!"
         self.last = self.drawObj.getCurrentFace()
         self.drawObj.toggleDrawMouth()
         syllables_list = self.syllableizer.getList()
+        thread.start()
         for word in syllables_list:
             print word
             sounds = word.split()

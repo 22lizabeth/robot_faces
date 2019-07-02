@@ -10,6 +10,7 @@ from robot_faces.srv import *
 from sensor_msgs.msg import Image
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 import robotFace
+import synthesizer
 
 class Sawyer_Face:
 
@@ -17,9 +18,10 @@ class Sawyer_Face:
     def __init__(self, image, robotOn, dictPath):
        
         self._face = robotFace.robotFace(image, robotOn, dictPath)
-
+        self.synthesizer = synthesizer.Synthesizer()
         change_face_service = rospy.Service('face/change_emotion', Face, self.changeEmotion)
         speak_service = rospy.Service('face/say', Face, self.speak)
+        speak_no_animation_service = rospy.Service('face/say_demo', Face, self.speak_no_animation)
 
     def changeEmotion(self, req):
         try:
@@ -36,11 +38,19 @@ class Sawyer_Face:
         try:
             print req
             self._face.speak(req.character)
+
             return FaceResponse(True)
         except:
             return FaceResponse(False)
 
+    def speak_no_animation(self, req):
+        try:
+            # print req
+            self.synthesizer.say(req.character)
 
+            return FaceResponse(True)
+        except:
+            return FaceResponse(False)
 
 def main(args):
     image = False

@@ -59,8 +59,9 @@ class Syllableizer:
                     # print a
                     self.words_list.append(self.d[a.lower()])
             except:
+                path = os.path.dirname(__file__)
                 print "Errors, see error.txt"
-                f = open("error.txt", "a+")
+                f = open( path + "/error.txt", "a+")
                 f.write("Failed Word: %s\n" % a)
                 f.close()
 

@@ -18,6 +18,7 @@ import threading
 from sensor_msgs.msg import Image
 import face_display
 import signal
+# import synthesizer
 
 #Keys
 #Normal = 'n'
@@ -80,6 +81,7 @@ class robotFace:
         self.blinkObj.addJob()
         self.blinkObj.startSched()
         self.speachObj = Speech_Animation(self.img, self.faceDisplay, self.drawObj, self.image, self.robotOn, dictPath)
+
 
     def closing_handle(self):
         ###Throw sleeping face in here when done
