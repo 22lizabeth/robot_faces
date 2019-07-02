@@ -8,6 +8,8 @@ instructions from scratch:
 set up gcloud 
 sudo pip install --upgrade google-cloud-texttospeech
 sudo snap install google-cloud-sdk --classic
+pip install --upgrade google-cloud-storage
+
 log in:
 gcloud auth login
 set up project:
