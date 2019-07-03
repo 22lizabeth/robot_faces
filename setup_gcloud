@@ -1,6 +1,7 @@
 for this project all that needs to be done is:
 * install and setup gcloud 
 * login as jacob.h.tye@gmail.com 
+slack me for pass
 * gcloud config set project sawyer-demo
 
 instructions from scratch:
