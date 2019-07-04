@@ -137,25 +137,11 @@ class Speech_Animation:
 
     def speak(self, say):
         print say
-        self.engine.say(say)
         print "entering syllableizer"
         self.syllableizer.split_words(say)
-        # numWords = len(Say.split())
-        # print ("numwords", numWords)
-        # print len(Say)
-        # numLetters = len(Say.replace(" ", ""))
-        # print ("numLetters", numLetters)
-        # totalSec = (numWords / 140.0) * 60.0
-        # print ("totalSec", totalSec)
-        # secPerWord = totalSec / numWords
-        # print ("secPerWord", secPerWord)
-        # fps = totalSec / (2* numLetters)
-        # print ("fps", fps)
+        self.synthesizer.createFiles(say)
         thread = threading.Thread(target=self.synthesizer.say(say))
 
-        # self.animateFromC()
-        # self.img = self.mouth.drawFF()== "." or a == "," or a == "?" or a == "!"
-        # self.img = self.mouth.drawOO()== "." or a == "," or a == "?" or a == "!"
         self.last = self.drawObj.getCurrentFace()
         self.drawObj.toggleDrawMouth()
         syllables_list = self.syllableizer.getList()
@@ -175,11 +161,11 @@ class Speech_Animation:
                     self.animateToDict[mouth_shape]()
                     pass
                 # cv.waitKey(int((self.secToMs(fps) - 15)))
-                time.sleep(.075)
+                time.sleep(.055)
                 if (sound == 'PUNCTUATION'):
                     print ("punctiation")
                     # cv.waitKey(int(self.secToMs(fps) * 2))
-                    time.sleep(.09)
+                    time.sleep(.07)
                 self.last = mouth_shape
                 # string = raw_input('hello')
 

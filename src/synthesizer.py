@@ -17,7 +17,7 @@ import subprocess
 import os
 import subprocess
 import sys
-
+from pygame import mixer
 # visible in this process + all children
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.dirname(__file__) + "sawyer-demo.json"
 # subprocess.check_call(['sqsub', '-np', sys.argv[1], '/path/to/executable'],
@@ -45,6 +45,8 @@ class Synthesizer:
         self.audio_config = texttospeech.types.AudioConfig(
             audio_encoding=texttospeech.enums.AudioEncoding.MP3)
         self.commandsArray = []
+        self.mixer = mixer
+        self.mixer.init()
 
     def createFiles(self, phrase):
         if len(phrase) >= 200:
@@ -59,9 +61,9 @@ class Synthesizer:
                 path = 'Speech_Files/'
             else:
                 path = os.path.dirname(__file__) + '/Speech_Files/'
-            print path
+            # print path
             phrase = phrase.replace("\\", "")
-            print phrase
+            # print phrase
             filePath = phrase
             filePath = filePath.replace(".", "")
             filePath = filePath.replace("!", "")
@@ -74,8 +76,8 @@ class Synthesizer:
             filePath = path + filePath + ".mp3"
             print filePath
             if os.path.exists(filePath):
-                command = "play " + filePath
-                os.system(command)
+                command = filePath
+                self.commandsArray.append(command)
             else:
                 print ("Creating file")
                 self.synthesis_input = texttospeech.types.SynthesisInput(
@@ -90,14 +92,15 @@ class Synthesizer:
                     # Write the response to the output file.
                     out.write(response.audio_content)
                     print('Audio content written to file ' + filePath)
-                command = "play " + filePath
+                command = filePath
                 self.commandsArray.append(command)
     
     def say(self, phrase):
+        self.mixer.music.load(self.commandsArray[0])
+        self.mixer.music.play()
+        for c in self.commandsArray[1:]:
+            self.mixer.music.queue(c)
 
-        self.createFiles(phrase)
-        for c in self.commandsArray:
-            os.system(c)
         self.commandsArray = []
 
     def list_voices(self):
