@@ -13,16 +13,12 @@ import sys
 import pprint
 import shlex
 import subprocess
-
+import time
 import os
 import subprocess
 import sys
 from pygame import mixer
-# visible in this process + all children
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.dirname(__file__) + "sawyer-demo.json"
-# subprocess.check_call(['sqsub', '-np', sys.argv[1], '/path/to/executable'],
-#                       env=dict(os.environ, SQSUB_VAR="visible in this subprocess"))
-
+from mutagen.mp3 import MP3
 
 class Synthesizer:
     def __init__(self):
@@ -32,11 +28,9 @@ class Synthesizer:
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sawyer-demo.json"
 
 
-        os.system("echo $GOOGLE_APPLICATION_CREDENTIALS")
-        # implicit()
+        # os.system("echo $GOOGLE_APPLICATION_CREDENTIALS")
         self.client = texttospeech.TextToSpeechClient()
-        self.synthesis_input = texttospeech.types.SynthesisInput(
-            text="Hello World!")
+        self.synthesis_input = texttospeech.types.SynthesisInput(text="Hello World!")
         # Build the voice request, select the language code ("en-US") and the ssml
         # voice gender ("neutral")
         self.voice = texttospeech.types.VoiceSelectionParams(language_code='en-US', name='en-US-Wavenet-D',
@@ -44,9 +38,35 @@ class Synthesizer:
         # Select the type of audio file you want returned
         self.audio_config = texttospeech.types.AudioConfig(
             audio_encoding=texttospeech.enums.AudioEncoding.MP3)
-        self.commandsArray = []
+        self.filesArray = []
         self.mixer = mixer
         self.mixer.init()
+        
+    def getMP3Length(self):
+        length = 0.0
+        for f in self.filesArray:
+            audio = MP3(f)
+            length = length + float(audio.info.length)
+        return length
+
+    def createFilePath(self, phrase):
+            path = ""
+            if (os.path.dirname(__file__) == ""):
+                path = 'Speech_Files/'
+            else:
+                path = os.path.dirname(__file__) + '/Speech_Files/'
+            # print path
+            # print phrase
+            filePath = phrase
+            filePath = filePath.replace(".", "")
+            filePath = filePath.replace("!", "")
+            filePath = filePath.replace("'", "")
+            filePath = filePath.replace(",", "")
+            filePath = filePath.replace("?", "")
+            filePath = filePath.replace(" ", "_")
+            filePath = filePath.replace("\n", "")
+            filePath = path + filePath + ".mp3"
+            return filePath
 
     def createFiles(self, phrase):
         if len(phrase) >= 200:
@@ -56,28 +76,11 @@ class Synthesizer:
             self.createFiles(phrase[:index])
             self.createFiles(phrase[index + 1:])
         else:
-            path = ""
-            if (os.path.dirname(__file__) == ""):
-                path = 'Speech_Files/'
-            else:
-                path = os.path.dirname(__file__) + '/Speech_Files/'
-            # print path
             phrase = phrase.replace("\\", "")
-            # print phrase
-            filePath = phrase
-            filePath = filePath.replace(".", "")
-            filePath = filePath.replace("!", "")
-            filePath = filePath.replace("'", "")
-            filePath = filePath.replace("\\", "")
-            filePath = filePath.replace(",", "")
-            filePath = filePath.replace("?", "")
-            filePath = filePath.replace(" ", "_")
-            filePath = filePath.replace("\n", "")
-            filePath = path + filePath + ".mp3"
-            print filePath
+            filePath = self.createFilePath(phrase)
+            # print filePath
             if os.path.exists(filePath):
-                command = filePath
-                self.commandsArray.append(command)
+                self.filesArray.append(filePath)
             else:
                 print ("Creating file")
                 self.synthesis_input = texttospeech.types.SynthesisInput(
@@ -92,16 +95,24 @@ class Synthesizer:
                     # Write the response to the output file.
                     out.write(response.audio_content)
                     print('Audio content written to file ' + filePath)
-                command = filePath
-                self.commandsArray.append(command)
+                self.filesArray.append(filePath)
     
     def say(self, phrase):
-        self.mixer.music.load(self.commandsArray[0])
+        x = 0
+        self.mixer.music.load(self.filesArray[x])
+        # time.sleep(1.5)
         self.mixer.music.play()
-        for c in self.commandsArray[1:]:
-            self.mixer.music.queue(c)
+        # print len(self.filesArray)
+        while True:
+            pos = self.mixer.music.get_pos()
+            if int(pos) == -1:
+                x += 1
+                if x == len(self.filesArray):
+                    break
+                self.mixer.music.load(self.filesArray[x])
+                self.mixer.music.play()
 
-        self.commandsArray = []
+        self.filesArray = []
 
     def list_voices(self):
         """Lists the available voices."""

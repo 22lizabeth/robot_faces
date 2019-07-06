@@ -25,7 +25,7 @@ class Syllableizer:
             return False
 
     def split_words(self, usr_input):
-        print "in syllableizer"
+        # print "in syllableizer"
         words = usr_input
         words = words.replace(".", " . ")
         words = words.replace("!", " !")

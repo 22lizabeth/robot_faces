@@ -15,7 +15,7 @@ class Mouth:
         self.img = img
         self.drawDict = {'default': self.drawDefaultTalking, 'cc': self.drawClosed, 'oo': self.drawOO, 'aa':self.drawAA, 
                         'ff':self.drawFF, 'kk':self.drawRestTalking, 'n': self.drawNeutralFace, 's': self.drawSurpriseFace,
-                         'd': self.drawSadFace, 'a': self.drawAngryFace, 'h': self.drawHappyFace}
+                         'd': self.drawSadFace, 'a': self.drawAngryFace, 'h': self.drawHappyFace, 'rt': self.drawRestTalking}
         self.eraseDict = {'default': self.eraseDefaultTalking, 'cc': self.eraseClosed, 'oo': self.eraseOO, 'aa': self.eraseAA, 
                         'ff': self.eraseFF, 'kk':self.eraseRestTalking,'n': self.eraseNeutralFace, 's': self.eraseSurpriseFace,
                          'd': self.eraseSadFace, 'a': self.eraseAngryFace, 'h': self.eraseHappyFace}   
@@ -29,6 +29,7 @@ class Mouth:
 
     def eraseMouth(self, mouthType):
         # print ("here")
+        self.currentMouth = 'rt'
         return self.eraseDict[mouthType]()
 
     def drawCurrentMouth(self):

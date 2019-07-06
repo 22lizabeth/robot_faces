@@ -36,7 +36,7 @@ class Sawyer_Face:
 
     def speak(self, req):
         try:
-            print req
+            # print req
             self._face.speak(req.character)
 
             return FaceResponse(True)

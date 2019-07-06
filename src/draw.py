@@ -15,7 +15,7 @@ class Draw:
     def __init__(self, img):
         self.drawMouth = True
         self.mouthObj = Mouth(img)
-        print("here")
+        # print("here")
         self.currentFace = 'n'
         self.img = img
         self.drawDict = {'n': self.drawNeutralFace, 's': self.drawSurpriseFace, 'd': self.drawSadFace, 'a': self.drawAngryFace, 'h': self.drawHappyFace}
@@ -42,8 +42,10 @@ class Draw:
     def toggleDrawMouth(self):
         if self.drawMouth:
             self.drawMouth = False
+            # print self.drawMouth
             return
         self.drawMouth = True
+        # print self.drawMouth
     
     def drawInnerEye(self):
         cv.ellipse(self.img,(280,230),(45,80),0,0,360,eyeColor,-1) #leftIris

@@ -94,7 +94,7 @@ class robotFace:
         self.blinkObj.stopSched() 
 
     def speak(self, speech):
-        print ("here")
+        # print ("here")
         self.speachObj.speak(speech)    
 
     def change_face(self, k):

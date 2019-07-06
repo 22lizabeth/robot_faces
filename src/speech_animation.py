@@ -9,36 +9,6 @@ import synthesizer
 import threading
 import syllableizer
 
-#Colors (BGR)
-black = 0, 0, 0
-white = 255, 255, 255
-green = 0, 153, 76
-pink = 203, 192, 255
-backgroundColor = white
-faceColor = black
-eyeColor = green
-
-fps = 150
-
-#Neutral Face Paramters
-nBottomEyeCenterY1 = 141
-nBottomEyeCenterY2 = 180
-nEyebrowY1 = 170
-nEyebrowY2 = 70
-nArchY1 = 288
-nArchY2 = 150
-nEyeLineY1 = 202
-nEyeLineY2 = 258
-nUpperMouthY1 = 500
-nUpperMouthY2 = 4
-nUpperMouthX2 = 58
-nLowerMouthY1 = 493
-nLowerMouthY2 = 10
-nLowerMouthX2 = 95
-nMouthY1 = 493
-nMouthY2 = 10
-
-
 class Speech_Animation:
     def __init__(self, img, faceDisplayObj, drawObj, computerImage, robotOn, dictPath):
         self.img = img
@@ -135,39 +105,55 @@ class Speech_Animation:
         print (sec, sec*1000)
         return sec * 1000
 
+    def getNumSyllables(self, syllables_list):
+        ret = [0,0]
+        for word in syllables_list:
+            sounds = word.split()
+            for sound in sounds:
+                ret[0] = ret[0] + 1
+                if (sound == 'PUNCTUATION'):
+                    ret[1] = ret[1] + 1
+        return ret
+
+    def getPauseTime(self, syllables_list):
+        totalLength = self.synthesizer.getMP3Length()
+        numSyllables = self.getNumSyllables(syllables_list)
+        totalSyllables = numSyllables[0]
+        numPunct = numSyllables[1]
+        pause = totalLength / (totalSyllables + 3*numPunct)
+        return pause
+
     def speak(self, say):
-        print say
-        print "entering syllableizer"
+        # print say
+        # print "entering syllableizer"
         self.syllableizer.split_words(say)
         self.synthesizer.createFiles(say)
-        thread = threading.Thread(target=self.synthesizer.say(say))
+        thread = threading.Thread(target=self.synthesizer.say, args=[say])
 
         self.last = self.drawObj.getCurrentFace()
         self.drawObj.toggleDrawMouth()
+        
         syllables_list = self.syllableizer.getList()
+        pause = self.getPauseTime(syllables_list)
         thread.start()
+        # time.sleep(.2)
         for word in syllables_list:
-            print word
             sounds = word.split()
             for sound in sounds:
                 mouth_shape = self.soundDict[sound]
-                print mouth_shape
                 if mouth_shape != self.last:
                     self.animateFromDict[self.last]()
                     pass
-                # cv.waitKey(15)
-                time.sleep(0.03)
+
+                time.sleep(.35 * pause)
                 if mouth_shape != self.last:
                     self.animateToDict[mouth_shape]()
                     pass
-                # cv.waitKey(int((self.secToMs(fps) - 15)))
-                time.sleep(.055)
+
+                time.sleep(.5 * pause)
                 if (sound == 'PUNCTUATION'):
-                    print ("punctiation")
-                    # cv.waitKey(int(self.secToMs(fps) * 2))
-                    time.sleep(.07)
+                    time.sleep(2*pause) 
                 self.last = mouth_shape
-                # string = raw_input('hello')
 
         self.mouth.eraseRestTalking()
         self.mouth.eraseMouth(self.last)
@@ -192,7 +178,7 @@ class Speech_Animation:
         return self.img
 
     def animateToDefault(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('default')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -211,7 +197,7 @@ class Speech_Animation:
         return self.img
 
     def animateToFF(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('ff')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -229,7 +215,7 @@ class Speech_Animation:
         return self.img
 
     def animateToKK(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('kk')
         if self.computerImage:
             cv.imshow('Face', self.img)
@@ -247,7 +233,7 @@ class Speech_Animation:
         return self.img
 
     def animateToC(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('cc')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -265,7 +251,7 @@ class Speech_Animation:
         return self.img
 
     def animateToAA(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('aa')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -286,7 +272,7 @@ class Speech_Animation:
 
     def animateToOO(self):
 
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('oo')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -306,7 +292,7 @@ class Speech_Animation:
         return self.img
 
     def animateToNeutralFace(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('n')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -324,7 +310,7 @@ class Speech_Animation:
         return self.img
     
     def animateToSurpriseFace(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('s')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -343,7 +329,7 @@ class Speech_Animation:
         return self.img
     
     def animateToSadFace(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('s')
         if self.computerImage:
             cv.imshow('Face',self.img)
@@ -361,7 +347,7 @@ class Speech_Animation:
         return self.img
 
     def animateToAngryFace(self):
-        self.mouth.eraseRestTalking()
+        self.img = self.mouth.eraseRestTalking()
         self.img = self.mouth.drawMouth('a')
         if self.computerImage:
             cv.imshow('Face',self.img)
