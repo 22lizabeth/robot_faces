@@ -8,9 +8,9 @@ instructions from scratch:
 -------------------------------------------------------
 
 install and set up gcloud:
-sudo pip install --upgrade google-cloud-texttospeech
+sudo pip install --upgrade google-cloud-texttospeech --ignore-installed pyasn1
 sudo snap install google-cloud-sdk --classic
-pip install --upgrade google-cloud-storage
+sudo pip install --upgrade google-cloud-storage
 
 log in:
 gcloud auth login
