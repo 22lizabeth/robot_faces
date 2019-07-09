@@ -41,7 +41,7 @@ class Synthesizer:
         self.filesArray = []
         self.mixer = mixer
         self.mixer.init()
-        
+
     def getMP3Length(self):
         length = 0.0
         for f in self.filesArray:

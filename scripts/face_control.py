@@ -36,6 +36,8 @@ class Sawyer_Face:
 
     def speak(self, req):
         try:
+            if (req.character == ""):
+                return FaceResponse(True)
             # print req
             self._face.speak(req.character)
 
@@ -45,7 +47,8 @@ class Sawyer_Face:
 
     def speak_no_animation(self, req):
         try:
-            # print req
+            print req
+            self.synthesizer.createFiles(req.character)
             self.synthesizer.say(req.character)
 
             return FaceResponse(True)
