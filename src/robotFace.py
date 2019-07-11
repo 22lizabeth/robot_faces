@@ -95,6 +95,7 @@ class robotFace:
 
     def speak(self, speech):
         # print ("here")
+        # self.drawObj.updateCurrentFace(chr(self.currentFace), self.img)
         self.speachObj.speak(speech)    
 
     def change_face(self, k):
@@ -109,6 +110,7 @@ class robotFace:
             if self.robotOn:
                 self.faceDisplay.display_image(self.img)  #ROBOT DISPLAY
             self.blinkObj.updateCurrentFace(chr(self.currentFace),self.img)
+            # self.drawObj.updateCurrentFace(chr(self.currentFace), self.img)
             return True
 
 

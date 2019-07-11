@@ -34,7 +34,15 @@ class Draw:
         return self.drawDict[faceType]()
 
     def getCurrentFace(self):
+        # print ("current face", self.currentFace)
         return self.currentFace
+
+    # def updateCurrentFace(self, faceType, newImg):
+    #     print ("current face", self.currentFace)
+    #     self.currentFace = faceType
+    #     self.img = newImg
+    #     print ("updated face", self.currentFace)
+    #     return self.currentFace
 
     def updateMouthObj(self, newMouthObj):
         self.mouthObj = newMouthObj

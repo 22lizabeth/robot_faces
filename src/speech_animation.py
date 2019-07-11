@@ -136,6 +136,9 @@ class Speech_Animation:
         syllables_list = self.syllableizer.getList()
         pause = self.getPauseTime(syllables_list)
         thread.start()
+        # print time.time()
+        end_time = time.time() + self.synthesizer.getMP3Length() + (self.synthesizer.numFiles() * .8)
+        # print end_time
         # time.sleep(.2)
         for word in syllables_list:
             sounds = word.split()
@@ -154,6 +157,10 @@ class Speech_Animation:
                 if (sound == 'PUNCTUATION'):
                     time.sleep(2*pause) 
                 self.last = mouth_shape
+                if time.time() >= end_time:
+                    break
+            if time.time() >= end_time:
+                break
 
         self.mouth.eraseRestTalking()
         self.mouth.eraseMouth(self.last)

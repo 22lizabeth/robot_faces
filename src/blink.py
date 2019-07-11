@@ -32,6 +32,7 @@ class Blink:
 
     def blink(self):
         self.img[:] = backgroundColor
+        # print ("blink current face", self.currentFace)
         self.blinkDict[self.currentFace]()
         return
 
@@ -45,6 +46,7 @@ class Blink:
         self.scheduler.shutdown()
     
     def updateCurrentFace(self,newFace,newImg):
+        # self.drawObj.updateCurrentFace(newFace, newImg)
         self.currentFace = newFace
         self.img = newImg
 

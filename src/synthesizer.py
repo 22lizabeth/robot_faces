@@ -97,6 +97,9 @@ class Synthesizer:
                     print('Audio content written to file ' + filePath)
                 self.filesArray.append(filePath)
     
+    def numFiles(self):
+        return len(self.filesArray) - 1
+
     def say(self, phrase):
         x = 0
         self.mixer.music.load(self.filesArray[x])
