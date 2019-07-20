@@ -5,7 +5,7 @@ Press a key to display a certain face. Continue to press the faces you wish to d
 
 **Keys:
   {'n': Neutral Face, 
-  'h': Happy Face (not currently active), 
+  'h': Happy Face, 
   'a': Angry Face, 
   's': Surprised Face, 
   'd': Sad Face, 
