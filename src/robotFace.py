@@ -6,7 +6,10 @@ from animate import*
 # from blink import*
 from speech_animation import*
 
-
+import face_display
+import cv_bridge
+import rospy
+from sensor_msgs.msg import Image
 import os
 import cv2
 
@@ -104,17 +107,20 @@ class robotFace:
             self.closing_handle()
             return False
         else:
-            self.img = self.animateObj.animateFace(
-                chr(self.currentFace), chr(k))
-            self.currentFace = k
-            if self.image:
-                cv.imshow('Face', self.img)  # COMPUTER DISPLAY
-            if self.robotOn:
-                self.faceDisplay.display_image(self.img)  # ROBOT DISPLAY
-                self.blinkObj.updateCurrentFace(
-                    chr(self.currentFace), self.img)
-            # self.drawObj.updateCurrentFace(chr(self.currentFace), self.img)
-            return True
+            try:
+                self.img = self.animateObj.animateFace(
+                    chr(self.currentFace), chr(k))
+                self.currentFace = k
+                if self.image:
+                    cv.imshow('Face', self.img)  # COMPUTER DISPLAY
+                if self.robotOn:
+                    self.faceDisplay.display_image(self.img)  # ROBOT DISPLAY
+                    self.blinkObj.updateCurrentFace(
+                        chr(self.currentFace), self.img)
+                # self.drawObj.updateCurrentFace(chr(self.currentFace), self.img)
+                return True
+            except:
+                return True
 
 
 signal.signal(signal.SIGINT, keyboardInterruptHandler)

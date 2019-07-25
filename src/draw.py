@@ -221,7 +221,7 @@ class Draw:
         #mouth
         cv.ellipse(self.img,(512,478),(169,4),180,220,320,faceColor,thickness=4) #happyUpperMouth
         cv.ellipse(self.img,(512,388),(167,150),180,220,320,faceColor,thickness=4) #happyLowerMouth
-        cv.imshow('Face',img)
+        cv.imshow('Face',self.img)
 
         return self.img
 
