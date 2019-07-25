@@ -208,5 +208,20 @@ class Draw:
         return self.img
 
     def drawHappyFace(self):
+        #LeftEye
+        cv.ellipse(self.img,(280,270),(160,66),0,215,305,faceColor,thickness=8) #leftEyeArch
+
+        #RightEye
+        cv.ellipse(self.img,(744,270),(160,66),0,235,325,faceColor,thickness=8) #rightEyeArch
+
+        #Eyebrows
+        cv.ellipse(self.img,(280,220),(190,110),0,225,305,faceColor,thickness=5) #leftEyebrow
+        cv.ellipse(self.img,(744,220),(190,110),0,235,315,faceColor,thickness=5) #rightEyebrow
+
+        #mouth
+        cv.ellipse(self.img,(512,478),(169,4),180,220,320,faceColor,thickness=4) #happyUpperMouth
+        cv.ellipse(self.img,(512,388),(167,150),180,220,320,faceColor,thickness=4) #happyLowerMouth
+        cv.imshow('Face',img)
+
         return self.img
 

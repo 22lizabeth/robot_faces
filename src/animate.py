@@ -534,7 +534,86 @@ class Animate:
         return self.drawObj.drawFace('n')
 
     def animateFromHappy(self):
-        return self.img
+        #Animation Variables
+        eyebrowMaxChange = 2
+        mouthMaxChange = 8
+        maxChange = max([eyebrowMaxChange,mouthMaxChange])
+
+        eyebrowY1 = 220
+        eyebrowY2 = 110
+        archY1 = 270
+        archY2 = 66
+        archX2 = 160
+        upperMouthY1 = 478
+        upperMouthX2 = 169
+        lowerMouthY1 = 388
+        lowerMouthY2 = 150
+        lowerMouthX2 = 167
+
+        #Animation to neutral face from happy face
+        for i in range(maxChange):
+
+            if i == 5: 
+                #Open eyes suddenly
+                #LeftEye
+                cv.ellipse(self.img,(280,270),(160,66),0,215,305,backgroundColor,thickness=8) #leftEyeArch
+                #RightEye
+                cv.ellipse(self.img,(744,270),(160,66),0,235,325,backgroundColor,thickness=8) #rightEyeArch
+
+                self.drawObj.drawInnerEye()
+                #LeftEye
+                cv.ellipse(self.img,(280,288),(180,150),0,215,305,faceColor,thickness=4) #leftUpperEyeArch
+                cv.line(self.img,(132,202),(170,258),faceColor,thickness=4) #leftEyeSideLine
+                cv.ellipse(self.img,(280,141),(200,180),180,250,290,faceColor,thickness=4) #leftBottomEyeArch
+
+                #RightEye
+                cv.ellipse(self.img,(744,288),(180,150),0,235,325,faceColor,thickness=4) #rightUpperEyeArch
+                cv.line(self.img,(892,202),(854,258),faceColor,thickness=4) #rightEyeSideLine
+                cv.ellipse(self.img,(744,141),(200,180),180,250,290,faceColor,thickness=4) #rightBottomEyeArch
+
+            #Mouth animation to neutral mouth
+            if i < mouthMaxChange:
+                #Animate upper mouth before it melds with lower mouth
+                #Animate upper mouth
+                cv.ellipse(self.img,(512,upperMouthY1),(upperMouthX2,nUpperMouthY2),180,220,320,backgroundColor,thickness=4) #upperMouthArch
+                if i < 7:
+                    #Decrease column radius to shorten upper lip while increasing center coord to lower upper lip
+                    if i > 3:
+                        upperMouthX2 = upperMouthX2 - 5
+                        upperMouthY1 = upperMouthY1 + 4
+                    else:
+                        upperMouthX2 = upperMouthX2 - 12
+                        upperMouthY1 = upperMouthY1 + 2
+                    cv.ellipse(self.img,(512,upperMouthY1),(upperMouthX2,nUpperMouthY2),180,220,320,faceColor,thickness=4) #upperMouthArch
+
+                #Animate lower mouth
+                cv.ellipse(self.img,(512,lowerMouthY1),(lowerMouthX2,lowerMouthY2),180,220,320,backgroundColor,thickness=4) #lowerMouthArch
+                if i < 7:
+                    #Decrease row radius to mover lower mouth closer to upper mouth
+                    lowerMouthY2 = lowerMouthY2 - 20
+                    #Increase center y-coordinate of lower mouth
+                    lowerMouthY1 = lowerMouthY1 + 15
+                #Decrease lower mouth column radius to shorten the mouth
+                lowerMouthX2 = lowerMouthX2 - 9
+                cv.ellipse(self.img,(512,lowerMouthY1),(lowerMouthX2,lowerMouthY2),180,220,320,faceColor,thickness=4) #lowerMouthArch
+
+            #Eyebrow animation to neutral eyebrows
+            if i < eyebrowMaxChange:
+                cv.ellipse(self.img,(280,eyebrowY1),(190,eyebrowY2),0,225,305,backgroundColor,thickness=5) #leftEyebrow
+                cv.ellipse(self.img,(744,eyebrowY1),(190,eyebrowY2),0,235,315,backgroundColor,thickness=5) #rightEyebrow
+                eyebrowY1 = eyebrowY1 - 25
+                eyebrowY2 = eyebrowY2 - 20
+                cv.ellipse(self.img,(280,eyebrowY1),(190,eyebrowY2),0,225,305,faceColor,thickness=5) #leftEyebrow
+                cv.ellipse(self.img,(744,eyebrowY1),(190,eyebrowY2),0,235,315,faceColor,thickness=5) #rightEyebrow   
+
+            #Show the images at each stage of animation
+            if self.computerImage:
+                cv.imshow('Face',self.img) #COMPUTER DISPLAY
+            if self.robotOn:
+                self.faceDisplayObj.display_image(self.img)  #ROBOT DISPLAY
+            cv.waitKey(fps)
+
+        return self.drawObj.drawFace('n')
 
     def animateToSurprised(self):
         print("to surprised")
@@ -915,7 +994,139 @@ class Animate:
         return self.drawObj.drawFace('a')
 
     def animateToHappy(self):
-        return self.img
+        #Animation Variables
+        bottomEyeArchMaxChange = 12
+        eyebrowMaxChange = 2
+        upperEyeArchMaxChange = 14
+        eyeSideLineMaxChange = 8
+        mouthMaxChange = 12
+        maxChange = max([bottomEyeArchMaxChange,eyebrowMaxChange,upperEyeArchMaxChange,eyeSideLineMaxChange,mouthMaxChange])
+
+        bottomEyeCurvedDown = False
+        bottomEyeAxes = 180
+        bottomEyeStartAngle = 250
+        bottomEyeEndAngle = 290
+        bottomEyeCenterY1 = nBottomEyeCenterY1
+        bottomEyeCenterY2 = nBottomEyeCenterY2
+        eyebrowY1 = nEyebrowY1
+        eyebrowY2 = nEyebrowY2
+        archY1 = nArchY1
+        archY2 = nArchY2
+        archX2 = 180
+        upperEyeArchThickness = 4
+        eyeLineY1 = nEyeLineY1
+        eyeLineY2 = nEyeLineY2
+        lEyeLineX1 = 132
+        rEyeLineX1 = 892
+        lEyeLineX2 = 170
+        rEyeLineX2 = 854
+        upperMouthY1 = nUpperMouthY1
+        upperMouthX2 = 125
+        lowerMouthY1 = nLowerMouthY1
+        lowerMouthY2 = nLowerMouthY2
+        lowerMouthX2 = nLowerMouthX2
+
+        #Animation to happy face from neutral face
+        for i in range(maxChange):
+
+            #Mouth animation to happy mouth
+            if i < mouthMaxChange:
+                #Animate upper mouth after it unmelds with lower mouth
+                if i > 4:
+                    #Animate upper mouth
+                    cv.ellipse(self.img,(512,upperMouthY1),(upperMouthX2,nUpperMouthY2),180,220,320,backgroundColor,thickness=4) #upperMouthArch
+                    #Increase column radius to widen upper lip while decreasing center coord to raise upper lip
+                    if i < 9:
+                        upperMouthX2 = upperMouthX2 + 5
+                        upperMouthY1 = upperMouthY1 - 4
+                    else:
+                        upperMouthX2 = upperMouthX2 + 8
+                        upperMouthY1 = upperMouthY1 - 2
+                    cv.ellipse(self.img,(512,upperMouthY1),(upperMouthX2,nUpperMouthY2),180,220,320,faceColor,thickness=4) #upperMouthArch
+
+                #Animate lower mouth
+                cv.ellipse(self.img,(512,lowerMouthY1),(lowerMouthX2,lowerMouthY2),180,220,320,backgroundColor,thickness=4) #lowerMouthArch
+                if i > 4:
+                    #Increase row radius to mover lower mouth further from upper mouth
+                    lowerMouthY2 = lowerMouthY2 + 20
+                    #Decrease center y-coordinate of lower mouth
+                    lowerMouthY1 = lowerMouthY1 - 15
+                #Increase lower mouth column radius to widen the mouth
+                lowerMouthX2 = lowerMouthX2 + 6
+                cv.ellipse(self.img,(512,lowerMouthY1),(lowerMouthX2,lowerMouthY2),180,220,320,faceColor,thickness=4) #lowerMouthArch
+
+            #Bottom eye arch animation to happy eyes
+            if i < bottomEyeArchMaxChange: #>= maxChange - bottomEyeArchMaxChange:
+                cv.ellipse(self.img,(280,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=10) #leftBottomEyeArch
+                cv.ellipse(self.img,(744,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,backgroundColor,thickness=10) #rightBottomEyeArch
+                if bottomEyeCenterY2 == 0:
+                    bottomEyeCurvedDown = True
+                    bottomEyeAxes = 0
+                if bottomEyeCurvedDown:
+                    bottomEyeCenterY1 = bottomEyeCenterY1 + 15
+                    bottomEyeCenterY2 = bottomEyeCenterY2 + 22
+                else:
+                    bottomEyeCenterY1 = bottomEyeCenterY1 + 10
+                    bottomEyeCenterY2 = bottomEyeCenterY2 - 18
+                if i > 6:
+                    bottomEyeStartAngle = bottomEyeStartAngle - 1
+                    bottomEyeEndAngle = bottomEyeEndAngle + 1
+                cv.ellipse(self.img,(280,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,faceColor,thickness=4) #leftBottomEyeArch
+                cv.ellipse(self.img,(744,bottomEyeCenterY1),(200,bottomEyeCenterY2),bottomEyeAxes,bottomEyeStartAngle,bottomEyeEndAngle,faceColor,thickness=4) #rightBottomEyeArch
+
+            #Eyebrow animation to happy eyebrows
+            if i >= maxChange - eyebrowMaxChange:
+                cv.ellipse(self.img,(280,eyebrowY1),(190,eyebrowY2),0,225,305,backgroundColor,thickness=5) #leftEyebrow
+                cv.ellipse(self.img,(744,eyebrowY1),(190,eyebrowY2),0,235,315,backgroundColor,thickness=5) #rightEyebrow
+                eyebrowY1 = eyebrowY1 + 25
+                eyebrowY2 = eyebrowY2 + 20
+                cv.ellipse(self.img,(280,eyebrowY1),(190,eyebrowY2),0,225,305,faceColor,thickness=5) #leftEyebrow
+                cv.ellipse(self.img,(744,eyebrowY1),(190,eyebrowY2),0,235,315,faceColor,thickness=5) #rightEyebrow
+
+            #Upper eye animation to happy eyes
+            if i >= maxChange - upperEyeArchMaxChange:
+                cv.ellipse(self.img,(744,archY1),(archX2,archY2),0,235,325,backgroundColor,thickness=8) #rightUpperEyeArch
+                cv.ellipse(self.img,(280,archY1),(archX2,archY2),0,215,305,backgroundColor,thickness=8) #leftUpperEyeArch
+                if i < bottomEyeArchMaxChange:
+                    archY1 = archY1 - 4
+                    archY2 = archY2 - 12
+                else:
+                    archY2 = archY2 + 30
+                    archX2 = archX2 - 10
+                    archY1 = archY1 + 15
+                if i == bottomEyeArchMaxChange - 1:
+                    upperEyeArchThickness = 8
+                cv.ellipse(self.img,(744,archY1),(archX2,archY2),0,235,325,faceColor,upperEyeArchThickness) #rightUpperEyeArch
+                cv.ellipse(self.img,(280,archY1),(archX2,archY2),0,215,305,faceColor,upperEyeArchThickness) #leftUpperEyeArch
+
+            #Eye side line animation
+            if i < eyeSideLineMaxChange:
+                cv.line(self.img,(lEyeLineX1,eyeLineY1),(lEyeLineX2,eyeLineY2),backgroundColor,thickness=4) #leftEyeSideLine
+                cv.line(self.img,(rEyeLineX1,eyeLineY1),(rEyeLineX2,eyeLineY2),backgroundColor,thickness=4) #rightEyeSideLine
+                eyeLineY2 = eyeLineY2 - 4
+                eyeLineY1 = eyeLineY1 + 1
+                lEyeLineX2 = lEyeLineX2 - 4
+                rEyeLineX2 = rEyeLineX2 + 4
+                if i > 2:
+                    lEyeLineX1 = lEyeLineX1 + 2
+                    rEyeLineX1 = rEyeLineX1 - 2
+                    eyeLineY1 = eyeLineY1 + 2
+                if i < 5:
+                    eyeLineY1 = eyeLineY1 + 1
+                    lEyeLineX2 = lEyeLineX2 + 2
+                    rEyeLineX2 = rEyeLineX2 - 2
+                if i < 7:
+                    cv.line(self.img,(lEyeLineX1,eyeLineY1),(lEyeLineX2,eyeLineY2),faceColor,thickness=4) #leftEyeSideLine
+                    cv.line(self.img,(rEyeLineX1,eyeLineY1),(rEyeLineX2,eyeLineY2),faceColor,thickness=4) #rightEyeSideLine
+
+             #Show the images
+            if self.computerImage:
+                cv.imshow('Face',self.img) #COMPUTER DISPLAY
+            if self.robotOn:
+                self.faceDisplayObj.display_image(self.img)  #ROBOT DISPLAY
+            cv.waitKey(fps)
+
+        return self.drawObj.drawFace('h',False)
 
 
 
