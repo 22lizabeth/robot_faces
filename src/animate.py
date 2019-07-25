@@ -3,7 +3,7 @@ import numpy as np
 import cv2 as cv
 from draw import*
 
-import face_display
+
 
 #Colors (BGR)
 black = 0,0,0
@@ -41,7 +41,8 @@ class Animate:
         self.drawObj = drawObj
         self.computerImage = computerImage
         self.robotOn = robotOn
-
+        if (robotOn):
+            import face_display
         self.animateToDict = {'s': self.animateToSurprised, 'd': self.animateToSad, 'a': self.animateToAngry, 'h': self.animateToHappy}
         self.animateFromDict = {'s': self.animateFromSurprised, 'd': self.animateFromSad, 'a': self.animateFromAngry, 'h': self.animateFromHappy}
 
